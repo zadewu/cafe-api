@@ -6,6 +6,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import vn.cmax.cafe.api.models.User;
 import vn.cmax.cafe.api.models.UserRequest;
+import vn.cmax.cafe.mapper.UserMapper;
+import vn.cmax.cafe.utils.UserRequests;
 
 import javax.transaction.Transactional;
 import java.util.Optional;
@@ -40,10 +42,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public UserEntity signUp(UserRequest userRequest) {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setUsername(userRequest.getUsername());
-        userEntity.setEmail(userRequest.getEmail());
-        userEntity.setIsActivate(false);
+        User user = UserRequests.toUser(userRequest);
+        UserEntity userEntity = UserMapper.INSTANCE.fromUser(user);
         userEntity.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         return this.userRepository.save(userEntity);
     }

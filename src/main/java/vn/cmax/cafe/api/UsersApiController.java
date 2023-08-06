@@ -27,7 +27,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import vn.cmax.cafe.auth.AuthenticationService;
+import vn.cmax.cafe.user.UserEntity;
 import vn.cmax.cafe.user.UserService;
+import vn.cmax.cafe.utils.RequestValidators;
 
 import javax.validation.constraints.*;
 import javax.validation.Valid;
@@ -50,11 +53,18 @@ public class UsersApiController implements UsersApi {
 
   private final UserService userService;
 
+  private final AuthenticationService authenticationService;
+
   @org.springframework.beans.factory.annotation.Autowired
-  public UsersApiController(ObjectMapper objectMapper, HttpServletRequest request, UserService userService) {
+  public UsersApiController(
+      ObjectMapper objectMapper,
+      HttpServletRequest request,
+      UserService userService,
+      AuthenticationService authenticationService) {
     this.objectMapper = objectMapper;
     this.request = request;
     this.userService = userService;
+    this.authenticationService = authenticationService;
   }
 
   public ResponseEntity<UserSearchResponse> usersGet(
@@ -112,15 +122,21 @@ public class UsersApiController implements UsersApi {
     return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
   }
 
-  public ResponseEntity<Void> usersNewPost(
+  public ResponseEntity usersSignUpPost(
       @Parameter(in = ParameterIn.DEFAULT, description = "", required = true, schema = @Schema())
           @Valid
           @RequestBody
           UserRequest body) {
-    String accept = request.getHeader("Accept");
-  this.userService.signUp(body);
-    return new ResponseEntity<Void>(
-            HttpStatus.OK
-    );
+    try {
+      String accept = request.getHeader("Accept");
+      RequestValidators.validateUserRequest(body);
+      UserEntity currentUser = this.authenticationService.getCurrentAuthenticatedUser();
+    this.userService.signUp(body);
+    return new ResponseEntity<Void>(HttpStatus.OK);
+    } catch (IllegalArgumentException ex) {
+        ApiError apiError = new ApiError();
+        apiError.code(HttpStatus.BAD_REQUEST.value()).message("Roles are not valid");
+        return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
+    }
   }
 }

@@ -39,13 +39,20 @@ public class UserEntity extends DomainAudit implements Serializable, UserDetails
   @Column(name = "password", nullable = false)
   private String password;
 
+  @Column(name = "firstname", nullable = false)
+  private String firstName;
+
+  @Column(name = "lastname", nullable = false)
+  private String lastName;
+
   @Column(name = "roles", nullable = false)
   @Enumerated(EnumType.STRING)
   @ElementCollection(targetClass = UserRole.class, fetch = FetchType.EAGER)
   private Set<UserRole> roles;
 
   @Column(name = "is_activated", nullable = false)
-  private Boolean isActivate;
+  @Builder.Default
+  private Boolean isActivate = false;
 
   @Column(name = "otp", length = 4)
   private Integer otp;

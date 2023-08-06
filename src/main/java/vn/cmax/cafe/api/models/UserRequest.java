@@ -39,9 +39,9 @@ public class UserRequest  implements Serializable  {
   @JsonProperty("phoneNumber")
   private String phoneNumber = null;
 
-  @JsonProperty("role")
+  @JsonProperty("roles")
   @Valid
-  private List<Role> role = null;
+  private List<Role> roles = null;
 
   public UserRequest username(String username) {
     this.username = username;
@@ -157,31 +157,31 @@ public class UserRequest  implements Serializable  {
     this.phoneNumber = phoneNumber;
   }
 
-  public UserRequest role(List<Role> role) {
-    this.role = role;
+  public UserRequest roles(List<Role> roles) {
+    this.roles = roles;
     return this;
   }
 
-  public UserRequest addRoleItem(Role roleItem) {
-    if (this.role == null) {
-      this.role = new ArrayList<Role>();
+  public UserRequest addRolesItem(Role rolesItem) {
+    if (this.roles == null) {
+      this.roles = new ArrayList<Role>();
     }
-    this.role.add(roleItem);
+    this.roles.add(rolesItem);
     return this;
   }
 
   /**
-   * Get role
-   * @return role
+   * Get roles
+   * @return roles
    **/
   @Schema(description = "")
       @Valid
-    public List<Role> getRole() {
-    return role;
+    public List<Role> getRoles() {
+    return roles;
   }
 
-  public void setRole(List<Role> role) {
-    this.role = role;
+  public void setRoles(List<Role> roles) {
+    this.roles = roles;
   }
 
 
@@ -200,12 +200,12 @@ public class UserRequest  implements Serializable  {
         Objects.equals(this.lastName, userRequest.lastName) &&
         Objects.equals(this.email, userRequest.email) &&
         Objects.equals(this.phoneNumber, userRequest.phoneNumber) &&
-        Objects.equals(this.role, userRequest.role);
+        Objects.equals(this.roles, userRequest.roles);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(username, password, firstName, lastName, email, phoneNumber, role);
+    return Objects.hash(username, password, firstName, lastName, email, phoneNumber, roles);
   }
 
   @Override
@@ -219,7 +219,7 @@ public class UserRequest  implements Serializable  {
     sb.append("    lastName: ").append(toIndentedString(lastName)).append("\n");
     sb.append("    email: ").append(toIndentedString(email)).append("\n");
     sb.append("    phoneNumber: ").append(toIndentedString(phoneNumber)).append("\n");
-    sb.append("    role: ").append(toIndentedString(role)).append("\n");
+    sb.append("    roles: ").append(toIndentedString(roles)).append("\n");
     sb.append("}");
     return sb.toString();
   }

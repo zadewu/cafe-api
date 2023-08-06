@@ -13,8 +13,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
  * Gets or Sets Role
  */
 public enum Role {
-  CUSTOMER("CUSTOMER"),
-    AUDITOR("AUDITOR");
+  USER("USER"),
+    AUDITOR("AUDITOR"),
+    ADMIN("ADMIN");
 
   private String value;
 

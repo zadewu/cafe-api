@@ -83,7 +83,7 @@ paths:
                 $ref: '#/components/schemas/UserSearchResponse'
       security:
         - BearerAuth: []
-  /users/new:
+  /users/signup:
     post:
       description: Create new user
       tags:
@@ -104,8 +104,6 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '500':
           $ref: '#/components/responses/ServerError'
-      security:
-        - BearerAuth: []
   /users/{id}:
     put:
       description: Update user
@@ -231,26 +229,38 @@ components:
       properties:
         id:
           type: integer
-        userName:
+        username:
           type: string
           example: mockuser
-        displayName:
+        firstName:
           type: string
-          example: John Doe
+          example: John
+        lastName:
+          type: string
+          example: Doe
         phoneNumber:
           type: string
-          example: 0933000111
+          example: 933000111
         email:
           type: string
           example: email@example.com
-        active:
+        activated:
           type: boolean
           example: true
+        deleted:
+          type: boolean
+          example: true
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
+            default: []
     Role:
       type: string
       enum:
-      - CUSTOMER
+      - USER
       - AUDITOR
+      - ADMIN
     UserRequest:
       type: object
       properties:
@@ -272,10 +282,11 @@ components:
         phoneNumber:
           type: string
           example: 933000111
-        role:
+        roles:
           type: array
           items:
             $ref: '#/components/schemas/Role'
+            default: []
   responses:
     BadRequest:
       description: Bad request

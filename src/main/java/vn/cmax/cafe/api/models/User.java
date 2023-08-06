@@ -4,6 +4,9 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.ArrayList;
+import java.util.List;
+import vn.cmax.cafe.api.models.Role;
 import java.io.Serializable;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
@@ -21,11 +24,14 @@ public class User  implements Serializable  {
   @JsonProperty("id")
   private Integer id = null;
 
-  @JsonProperty("userName")
-  private String userName = null;
+  @JsonProperty("username")
+  private String username = null;
 
-  @JsonProperty("displayName")
-  private String displayName = null;
+  @JsonProperty("firstName")
+  private String firstName = null;
+
+  @JsonProperty("lastName")
+  private String lastName = null;
 
   @JsonProperty("phoneNumber")
   private String phoneNumber = null;
@@ -33,8 +39,15 @@ public class User  implements Serializable  {
   @JsonProperty("email")
   private String email = null;
 
-  @JsonProperty("active")
-  private Boolean active = null;
+  @JsonProperty("activated")
+  private Boolean activated = null;
+
+  @JsonProperty("deleted")
+  private Boolean deleted = null;
+
+  @JsonProperty("roles")
+  @Valid
+  private List<Role> roles = null;
 
   public User id(Integer id) {
     this.id = id;
@@ -55,42 +68,61 @@ public class User  implements Serializable  {
     this.id = id;
   }
 
-  public User userName(String userName) {
-    this.userName = userName;
+  public User username(String username) {
+    this.username = username;
     return this;
   }
 
   /**
-   * Get userName
-   * @return userName
+   * Get username
+   * @return username
    **/
   @Schema(example = "mockuser", description = "")
   
-    public String getUserName() {
-    return userName;
+    public String getUsername() {
+    return username;
   }
 
-  public void setUserName(String userName) {
-    this.userName = userName;
+  public void setUsername(String username) {
+    this.username = username;
   }
 
-  public User displayName(String displayName) {
-    this.displayName = displayName;
+  public User firstName(String firstName) {
+    this.firstName = firstName;
     return this;
   }
 
   /**
-   * Get displayName
-   * @return displayName
+   * Get firstName
+   * @return firstName
    **/
-  @Schema(example = "John Doe", description = "")
+  @Schema(example = "John", description = "")
   
-    public String getDisplayName() {
-    return displayName;
+    public String getFirstName() {
+    return firstName;
   }
 
-  public void setDisplayName(String displayName) {
-    this.displayName = displayName;
+  public void setFirstName(String firstName) {
+    this.firstName = firstName;
+  }
+
+  public User lastName(String lastName) {
+    this.lastName = lastName;
+    return this;
+  }
+
+  /**
+   * Get lastName
+   * @return lastName
+   **/
+  @Schema(example = "Doe", description = "")
+  
+    public String getLastName() {
+    return lastName;
+  }
+
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
   }
 
   public User phoneNumber(String phoneNumber) {
@@ -131,23 +163,69 @@ public class User  implements Serializable  {
     this.email = email;
   }
 
-  public User active(Boolean active) {
-    this.active = active;
+  public User activated(Boolean activated) {
+    this.activated = activated;
     return this;
   }
 
   /**
-   * Get active
-   * @return active
+   * Get activated
+   * @return activated
    **/
   @Schema(example = "true", description = "")
   
-    public Boolean isActive() {
-    return active;
+    public Boolean isActivated() {
+    return activated;
   }
 
-  public void setActive(Boolean active) {
-    this.active = active;
+  public void setActivated(Boolean activated) {
+    this.activated = activated;
+  }
+
+  public User deleted(Boolean deleted) {
+    this.deleted = deleted;
+    return this;
+  }
+
+  /**
+   * Get deleted
+   * @return deleted
+   **/
+  @Schema(example = "true", description = "")
+  
+    public Boolean isDeleted() {
+    return deleted;
+  }
+
+  public void setDeleted(Boolean deleted) {
+    this.deleted = deleted;
+  }
+
+  public User roles(List<Role> roles) {
+    this.roles = roles;
+    return this;
+  }
+
+  public User addRolesItem(Role rolesItem) {
+    if (this.roles == null) {
+      this.roles = new ArrayList<Role>();
+    }
+    this.roles.add(rolesItem);
+    return this;
+  }
+
+  /**
+   * Get roles
+   * @return roles
+   **/
+  @Schema(description = "")
+      @Valid
+    public List<Role> getRoles() {
+    return roles;
+  }
+
+  public void setRoles(List<Role> roles) {
+    this.roles = roles;
   }
 
 
@@ -161,16 +239,19 @@ public class User  implements Serializable  {
     }
     User user = (User) o;
     return Objects.equals(this.id, user.id) &&
-        Objects.equals(this.userName, user.userName) &&
-        Objects.equals(this.displayName, user.displayName) &&
+        Objects.equals(this.username, user.username) &&
+        Objects.equals(this.firstName, user.firstName) &&
+        Objects.equals(this.lastName, user.lastName) &&
         Objects.equals(this.phoneNumber, user.phoneNumber) &&
         Objects.equals(this.email, user.email) &&
-        Objects.equals(this.active, user.active);
+        Objects.equals(this.activated, user.activated) &&
+        Objects.equals(this.deleted, user.deleted) &&
+        Objects.equals(this.roles, user.roles);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, userName, displayName, phoneNumber, email, active);
+    return Objects.hash(id, username, firstName, lastName, phoneNumber, email, activated, deleted, roles);
   }
 
   @Override
@@ -179,11 +260,14 @@ public class User  implements Serializable  {
     sb.append("class User {\n");
     
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
-    sb.append("    userName: ").append(toIndentedString(userName)).append("\n");
-    sb.append("    displayName: ").append(toIndentedString(displayName)).append("\n");
+    sb.append("    username: ").append(toIndentedString(username)).append("\n");
+    sb.append("    firstName: ").append(toIndentedString(firstName)).append("\n");
+    sb.append("    lastName: ").append(toIndentedString(lastName)).append("\n");
     sb.append("    phoneNumber: ").append(toIndentedString(phoneNumber)).append("\n");
     sb.append("    email: ").append(toIndentedString(email)).append("\n");
-    sb.append("    active: ").append(toIndentedString(active)).append("\n");
+    sb.append("    activated: ").append(toIndentedString(activated)).append("\n");
+    sb.append("    deleted: ").append(toIndentedString(deleted)).append("\n");
+    sb.append("    roles: ").append(toIndentedString(roles)).append("\n");
     sb.append("}");
     return sb.toString();
   }
