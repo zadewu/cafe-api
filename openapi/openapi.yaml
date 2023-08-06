@@ -1,0 +1,308 @@
+openapi: 3.0.3
+info:
+  title: Swagger CMax Cafe API
+  version: 0.1.0
+  description: |-
+    This is a openapi documentation for CMax Cafe.
+servers:
+  - url: http://localhost:8080/cafe-api/
+tags:
+  - name: auth
+    description: Operation about authentication
+  - name: movie
+    description: Operation about movie
+  - name: user
+    description: Operation about user
+paths:
+  /auth/login:
+    post:
+      tags:
+        - auth
+      summary: Process login with username and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthenticationRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /auth/refresh:
+    post:
+      description: Grant another accessToken
+      tags:
+        - auth
+      summary: Grant new access token
+      responses:
+        '200':
+          description: Grant another accessToken
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefreshTokenResponse'
+  /auth/logout:
+    post:
+      description: Logout with accessToken
+      tags:
+        - auth
+      summary: Logout with accessToken
+      responses:
+        '200':
+          description: Logout successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
+      security:
+        - BearerAuth: []
+  /users:
+    get:
+      description: Retrieve all users
+      tags:
+        - user
+      summary: Retrieve all users
+      parameters:
+        - $ref: '#/components/parameters/role'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSearchResponse'
+      security:
+        - BearerAuth: []
+  /users/new:
+    post:
+      description: Create new user
+      tags:
+        - user
+      summary: Create new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+      responses:
+        '200':
+          description: OK
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
+      security:
+        - BearerAuth: []
+  /users/{id}:
+    put:
+      description: Update user
+      tags:
+        - user
+      summary: Update user
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+      responses:
+        '204':
+          description: No Content
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
+      security:
+        - BearerAuth: []
+
+#Empty lie for separation
+components:
+  parameters:
+    id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        description: Id of object
+        example: 123
+    role:
+      name: role
+      in: query
+      schema:
+        $ref: '#/components/schemas/Role'
+    page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+    pageSize:
+      name: pageSize
+      in: query
+      schema:
+        type: integer
+        minimum: 10
+        maximum: 50
+  schemas:
+    ApiError:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: There is some error
+    AuthenticationRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          example: mockuser
+        password:
+          type: string
+          example: somepassword
+    AuthenticationResponse:
+      type: object
+      properties:
+        username:
+          type: string
+          example: mockuser
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+    RefreshTokenResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+    SearchResponse:
+      type: object
+      properties:
+        currentPage:
+          type: integer
+          minimum: 1
+        pageSize:
+          type: integer
+          minimum: 10
+          maximum: 50
+        totalCount:
+          type: integer
+          minimum: 0
+        totalPage:
+          type: integer
+          minimum: 0
+    UserSearchResponse:
+      allOf:
+        - $ref: '#/components/schemas/SearchResponse'
+        - type: object
+          properties:
+            records:
+              type: array
+              items:
+                $ref: '#/components/schemas/User'
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        userName:
+          type: string
+          example: mockuser
+        displayName:
+          type: string
+          example: John Doe
+        phoneNumber:
+          type: string
+          example: 0933000111
+        email:
+          type: string
+          example: email@example.com
+        active:
+          type: boolean
+          example: true
+    Role:
+      type: string
+      enum:
+      - CUSTOMER
+      - AUDITOR
+    UserRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          example: mockuser
+        password:
+          type: string
+          example: 
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        email:
+          type: string
+          example: email@example.com
+        phoneNumber:
+          type: string
+          example: 933000111
+        role:
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    ServerError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+  securitySchemes:
+     BearerAuth:
+      type: http
+      scheme: bearer
+

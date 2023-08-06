@@ -1,0 +1,14 @@
+package vn.cmax.cafe.exception;
+
+public enum ApiErrorType {
+    UNAUTHORIZED,
+    ACCESS_TOKEN_EXPIRED,
+    REFRESH_TOKEN_EXPIRED,
+    WRONG_OTP,
+    NONCE_EXPIRED,
+    CANNOT_SEND_OTP,
+    USER_DEACTIVATED,
+    USER_DELETED,
+    INVALID_CREDENTIALS,
+    TOO_MANY_REQUEST
+}
