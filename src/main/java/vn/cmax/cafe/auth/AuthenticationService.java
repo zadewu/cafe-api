@@ -10,4 +10,6 @@ public interface AuthenticationService {
     AuthenticationResponse login(AuthenticationRequest authenticationRequest, HttpServletResponse response) throws NoSuchAlgorithmException;
 
     UserEntity getCurrentAuthenticatedUser();
+
+    boolean isSuperUser(UserEntity userEntity);
 }

@@ -7,7 +7,7 @@ import org.mapstruct.factory.Mappers;
 import vn.cmax.cafe.api.models.User;
 import vn.cmax.cafe.user.UserEntity;
 
-@Mapper
+@Mapper(uses = RoleMapper.class)
 public interface UserMapper {
     public static final UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 

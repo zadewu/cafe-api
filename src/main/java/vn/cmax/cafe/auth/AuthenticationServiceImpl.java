@@ -23,6 +23,7 @@ import vn.cmax.cafe.security.jwt.model.CacheToken;
 import vn.cmax.cafe.security.jwt.model.Token;
 import vn.cmax.cafe.user.UserEntity;
 import vn.cmax.cafe.user.UserRepository;
+import vn.cmax.cafe.user.UserRole;
 import vn.cmax.cafe.user.UserService;
 
 @Service
@@ -72,6 +73,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
       return null;
     }
     return (UserEntity) principal;
+  }
+
+  @Override
+  public boolean isSuperUser(UserEntity userEntity) {
+    return userEntity.getRoles().stream().anyMatch(role -> role == UserRole.ADMIN);
   }
 
   private CacheToken setJwtTokenForUser(UserEntity user, HttpServletResponse response)

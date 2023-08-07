@@ -1,19 +1,25 @@
 package vn.cmax.cafe.utils;
 
 import lombok.experimental.UtilityClass;
-import org.springframework.http.HttpStatus;
-import vn.cmax.cafe.api.models.ApiError;
-import vn.cmax.cafe.api.models.Role;
+import org.apache.commons.lang3.StringUtils;
 import vn.cmax.cafe.api.models.UserRequest;
-
-import java.util.Objects;
+import vn.cmax.cafe.exception.ValidationException;
 
 @UtilityClass
 public class RequestValidators {
     public static void validateUserRequest(UserRequest userRequest) {
-        boolean match = userRequest.getRoles().stream().filter(Objects::nonNull).anyMatch(item -> item != Role.ADMIN);
-        if (match) {
-            throw new IllegalArgumentException("Roles are not valid");
+        if (StringUtils.isBlank(userRequest.getUsername())) {
+            throw new ValidationException("Username is blank");
+        }
+        if (StringUtils.isBlank(userRequest.getEmail())) {
+            throw new ValidationException("Email is blank");
+        }
+        if (StringUtils.isBlank(userRequest.getFirstName())) {
+            throw new ValidationException("Firstname is blank");
+        }
+        if (StringUtils.isBlank(userRequest.getLastName())) {
+            throw new ValidationException("Lastname is blank");
         }
     }
+
 }

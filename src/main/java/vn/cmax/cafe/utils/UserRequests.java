@@ -19,6 +19,8 @@ public class UserRequests {
         if (userRequest.getRoles() == null) {
             user.roles(new ArrayList<>());
             user.addRolesItem(Role.USER);
+        } else {
+            user.roles(userRequest.getRoles());
         }
         return user;
     }

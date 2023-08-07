@@ -139,6 +139,7 @@ components:
       required: true
       schema:
         type: integer
+        format: int64
         description: Id of object
         example: 123
     role:

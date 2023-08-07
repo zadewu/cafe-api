@@ -1,43 +1,30 @@
 package vn.cmax.cafe.api;
 
-import vn.cmax.cafe.api.models.ApiError;
-import vn.cmax.cafe.api.models.Role;
-import vn.cmax.cafe.api.models.UserRequest;
-import vn.cmax.cafe.api.models.UserSearchResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import java.io.IOException;
+import java.util.Objects;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
+import vn.cmax.cafe.api.models.ApiError;
+import vn.cmax.cafe.api.models.Role;
+import vn.cmax.cafe.api.models.UserRequest;
+import vn.cmax.cafe.api.models.UserSearchResponse;
 import vn.cmax.cafe.auth.AuthenticationService;
+import vn.cmax.cafe.exception.CmaxException;
 import vn.cmax.cafe.user.UserEntity;
 import vn.cmax.cafe.user.UserService;
-import vn.cmax.cafe.utils.RequestValidators;
-
-import javax.validation.constraints.*;
-import javax.validation.Valid;
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 @javax.annotation.Generated(
     value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
@@ -110,16 +97,51 @@ public class UsersApiController implements UsersApi {
     return new ResponseEntity<UserSearchResponse>(HttpStatus.NOT_IMPLEMENTED);
   }
 
-  public ResponseEntity<Void> usersIdPut(
+  public ResponseEntity usersIdPut(
       @Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
           @PathVariable("id")
-          Integer id,
+          Long id,
       @Parameter(in = ParameterIn.DEFAULT, description = "", required = true, schema = @Schema())
           @Valid
           @RequestBody
           UserRequest body) {
     String accept = request.getHeader("Accept");
-    return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
+    UserEntity userEntity = this.authenticationService.getCurrentAuthenticatedUser();
+    if (userEntity == null) {
+      ApiError error =
+          new ApiError()
+              .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+              .message("Cannot found current authenticated user");
+      return new ResponseEntity(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    if (!userEntity.getId().equals(id)) {
+        if (!this.authenticationService.isSuperUser(userEntity)) {
+            ApiError error =
+                    new ApiError()
+                            .code(HttpStatus.METHOD_NOT_ALLOWED.value())
+                            .message("Current authenticate user do not have permission to update other user.");
+            return new ResponseEntity(error, HttpStatus.METHOD_NOT_ALLOWED);
+        }
+    }
+  if (body.getRoles() != null && body.getRoles().size() > 0) {
+      if (!this.authenticationService.isSuperUser(userEntity)) {
+          ApiError error =
+                  new ApiError()
+                          .code(HttpStatus.METHOD_NOT_ALLOWED.value())
+                          .message("Current authenticate user do not have permission to update user's roles.");
+          return new ResponseEntity(error, HttpStatus.METHOD_NOT_ALLOWED);
+      }
+  }
+    try {
+        this.userService.updateUser(id, body);
+    } catch (CmaxException e) {
+        ApiError error =
+                new ApiError()
+                        .code(e.getStatus().value())
+                        .message(e.getMessage());
+        return new ResponseEntity(error, e.getStatus());
+    }
+  return new ResponseEntity(HttpStatus.NO_CONTENT);
   }
 
   public ResponseEntity usersSignUpPost(
@@ -127,16 +149,15 @@ public class UsersApiController implements UsersApi {
           @Valid
           @RequestBody
           UserRequest body) {
-    try {
-      String accept = request.getHeader("Accept");
-      RequestValidators.validateUserRequest(body);
-      UserEntity currentUser = this.authenticationService.getCurrentAuthenticatedUser();
+    String accept = request.getHeader("Accept");
+    boolean match =
+        body.getRoles().stream().filter(Objects::nonNull).anyMatch(item -> item == Role.ADMIN);
+    if (match) {
+      ApiError apiError = new ApiError();
+      apiError.code(HttpStatus.BAD_REQUEST.value()).message("Roles are not valid");
+      return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
+    }
     this.userService.signUp(body);
     return new ResponseEntity<Void>(HttpStatus.OK);
-    } catch (IllegalArgumentException ex) {
-        ApiError apiError = new ApiError();
-        apiError.code(HttpStatus.BAD_REQUEST.value()).message("Roles are not valid");
-        return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
-    }
   }
 }

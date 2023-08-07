@@ -119,7 +119,7 @@ public interface UsersApi {
   ResponseEntity<Void> usersIdPut(
       @Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
           @PathVariable("id")
-          Integer id,
+          Long id,
       @Parameter(in = ParameterIn.DEFAULT, description = "", required = true, schema = @Schema())
           @Valid
           @RequestBody
