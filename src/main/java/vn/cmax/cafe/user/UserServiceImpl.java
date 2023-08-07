@@ -51,6 +51,13 @@ public class UserServiceImpl implements UserService {
   @Transactional
   @Override
   public UserEntity signUp(UserRequest userRequest) {
+    Optional<UserEntity> userEntityOptional =
+        this.userRepository.findByUsernameOrEmail(
+            userRequest.getUsername(), userRequest.getEmail());
+    if (userEntityOptional.isPresent()) {
+      throw new ValidationException("User with username " + userRequest.getUsername() + " already exist");
+    }
+
     User user = UserRequests.toUser(userRequest);
     UserEntity userEntity = UserMapper.INSTANCE.fromUser(user);
     userEntity.setPassword(passwordEncoder.encode(userRequest.getPassword()));
