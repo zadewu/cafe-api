@@ -11,6 +11,8 @@ tags:
     description: Operation about authentication
   - name: movie
     description: Operation about movie
+  - name: category
+    description: Operation about movie category
   - name: user
     description: Operation about user
 paths:
@@ -105,6 +107,26 @@ paths:
         '500':
           $ref: '#/components/responses/ServerError'
   /users/{id}:
+    get:
+      description: Search user by Id
+      tags:
+        - user
+      summary: Search user by Id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
+      security:
+        - BearerAuth: [ ]
     put:
       description: Update user
       tags:
@@ -129,6 +151,145 @@ paths:
           $ref: '#/components/responses/ServerError'
       security:
         - BearerAuth: []
+  /category:
+    get:
+      description: Retrieve all categories
+      tags:
+        - category
+      summary: Retrieve all categories
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategorySearchResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
+      security:
+        - BearerAuth: [ ]
+  /category/{id}:
+    get:
+      description: Search category by Id
+      tags:
+        - category
+      summary: Update category
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
+      security:
+        - BearerAuth: [ ]
+    put:
+      description: Update category
+      tags:
+        - category
+      summary: Update category
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryRequest'
+      responses:
+        '204':
+          description: No Content
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
+      security:
+        - BearerAuth: [ ]
+  /movie:
+    get:
+      description: Retrieve all movies
+      tags:
+        - movie
+      summary: Retrieve all movies
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/category'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MovieSearchResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
+      security:
+        - BearerAuth: [ ]
+  /movie/{id}:
+    get:
+      description: Search movie by Id
+      tags:
+        - movie
+      summary: Search movie by Id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movie'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
+      security:
+        - BearerAuth: [ ]
+    put:
+      description: Update movie
+      tags:
+        - movie
+      summary: Update movie
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovieRequest'
+      responses:
+        '204':
+          description: No Content
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
+      security:
+        - BearerAuth: [ ]
 
 #Empty lie for separation
 components:
@@ -152,7 +313,7 @@ components:
       in: query
       schema:
         type: integer
-        minimum: 1
+        minimum: 0
     pageSize:
       name: pageSize
       in: query
@@ -160,6 +321,11 @@ components:
         type: integer
         minimum: 10
         maximum: 50
+    category:
+      name: category
+      in: query
+      schema:
+        type: string
   schemas:
     ApiError:
       type: object
@@ -205,13 +371,14 @@ components:
       properties:
         currentPage:
           type: integer
-          minimum: 1
+          minimum: 0
         pageSize:
           type: integer
           minimum: 10
           maximum: 50
         totalCount:
           type: integer
+          format: int64
           minimum: 0
         totalPage:
           type: integer
@@ -228,8 +395,6 @@ components:
     User:
       type: object
       properties:
-        id:
-          type: integer
         username:
           type: string
           example: mockuser
@@ -259,9 +424,9 @@ components:
     Role:
       type: string
       enum:
-      - USER
-      - AUDITOR
-      - ADMIN
+        - USER
+        - AUDITOR
+        - ADMIN
     UserRequest:
       type: object
       properties:
@@ -270,7 +435,7 @@ components:
           example: mockuser
         password:
           type: string
-          example: 
+          example:
         firstName:
           type: string
           example: John
@@ -288,6 +453,47 @@ components:
           items:
             $ref: '#/components/schemas/Role'
             default: []
+    CategoryRequest:
+      type: object
+      properties:
+        name:
+          type: string
+    Category:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Science Fiction
+    CategorySearchResponse:
+      allOf:
+        - $ref: '#/components/schemas/SearchResponse'
+        - type: object
+          properties:
+            records:
+              type: array
+              items:
+                $ref: '#/components/schemas/Category'
+    Movie:
+      type: object
+      properties:
+        name:
+          type: object
+        duration:
+          type: integer
+        description:
+          type: string
+    MovieRequest:
+      allOf:
+        - $ref: '#/components/schemas/Movie'
+    MovieSearchResponse:
+      allOf:
+        - $ref: '#/components/schemas/SearchResponse'
+        - type: object
+          properties:
+            records:
+              type: array
+              items:
+                $ref: '#/components/schemas/Movie'
   responses:
     BadRequest:
       description: Bad request
@@ -314,7 +520,7 @@ components:
           schema:
             $ref: '#/components/schemas/ApiError'
   securitySchemes:
-     BearerAuth:
+    BearerAuth:
       type: http
       scheme: bearer
 

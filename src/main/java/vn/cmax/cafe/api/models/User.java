@@ -21,9 +21,6 @@ import javax.validation.constraints.*;
 public class User  implements Serializable  {
   private static final long serialVersionUID = 1L;
 
-  @JsonProperty("id")
-  private Integer id = null;
-
   @JsonProperty("username")
   private String username = null;
 
@@ -48,25 +45,6 @@ public class User  implements Serializable  {
   @JsonProperty("roles")
   @Valid
   private List<Role> roles = null;
-
-  public User id(Integer id) {
-    this.id = id;
-    return this;
-  }
-
-  /**
-   * Get id
-   * @return id
-   **/
-  @Schema(description = "")
-  
-    public Integer getId() {
-    return id;
-  }
-
-  public void setId(Integer id) {
-    this.id = id;
-  }
 
   public User username(String username) {
     this.username = username;
@@ -238,8 +216,7 @@ public class User  implements Serializable  {
       return false;
     }
     User user = (User) o;
-    return Objects.equals(this.id, user.id) &&
-        Objects.equals(this.username, user.username) &&
+    return Objects.equals(this.username, user.username) &&
         Objects.equals(this.firstName, user.firstName) &&
         Objects.equals(this.lastName, user.lastName) &&
         Objects.equals(this.phoneNumber, user.phoneNumber) &&
@@ -251,7 +228,7 @@ public class User  implements Serializable  {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, username, firstName, lastName, phoneNumber, email, activated, deleted, roles);
+    return Objects.hash(username, firstName, lastName, phoneNumber, email, activated, deleted, roles);
   }
 
   @Override
@@ -259,7 +236,6 @@ public class User  implements Serializable  {
     StringBuilder sb = new StringBuilder();
     sb.append("class User {\n");
     
-    sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    username: ").append(toIndentedString(username)).append("\n");
     sb.append("    firstName: ").append(toIndentedString(firstName)).append("\n");
     sb.append("    lastName: ").append(toIndentedString(lastName)).append("\n");

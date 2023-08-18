@@ -25,7 +25,7 @@ public class SearchResponse  implements Serializable  {
   private Integer pageSize = null;
 
   @JsonProperty("totalCount")
-  private Integer totalCount = null;
+  private Long totalCount = null;
 
   @JsonProperty("totalPage")
   private Integer totalPage = null;
@@ -37,12 +37,12 @@ public class SearchResponse  implements Serializable  {
 
   /**
    * Get currentPage
-   * minimum: 1
+   * minimum: 0
    * @return currentPage
    **/
   @Schema(description = "")
   
-  @Min(1)  public Integer getCurrentPage() {
+  @Min(0)  public Integer getCurrentPage() {
     return currentPage;
   }
 
@@ -71,7 +71,7 @@ public class SearchResponse  implements Serializable  {
     this.pageSize = pageSize;
   }
 
-  public SearchResponse totalCount(Integer totalCount) {
+  public SearchResponse totalCount(Long totalCount) {
     this.totalCount = totalCount;
     return this;
   }
@@ -83,11 +83,11 @@ public class SearchResponse  implements Serializable  {
    **/
   @Schema(description = "")
   
-  @Min(0)  public Integer getTotalCount() {
+  @Min(0L)  public Long getTotalCount() {
     return totalCount;
   }
 
-  public void setTotalCount(Integer totalCount) {
+  public void setTotalCount(Long totalCount) {
     this.totalCount = totalCount;
   }
 
