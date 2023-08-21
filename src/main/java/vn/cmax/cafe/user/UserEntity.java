@@ -54,12 +54,6 @@ public class UserEntity extends DomainAudit implements Serializable, UserDetails
   @Builder.Default
   private Boolean isActivate = false;
 
-  @Column(name = "otp", length = 4)
-  private Integer otp;
-
-  @Column(name = "nonce", length = 100)
-  private String nonce;
-
   @Column(name = "deleted", columnDefinition = "boolean default false")
   @Builder.Default
   private Boolean deleted = false;
