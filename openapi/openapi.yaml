@@ -13,6 +13,8 @@ tags:
     description: Operation about movie
   - name: category
     description: Operation about movie category
+  - name: promotion
+    description: Operation about promotion
   - name: user
     description: Operation about user
 paths:
@@ -171,8 +173,25 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '500':
           $ref: '#/components/responses/ServerError'
-      security:
-        - BearerAuth: [ ]
+    post:
+      description: Create new category
+      tags:
+        - category
+      summary: Create new category
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryPostRequest'
+      responses:
+        '204': OK
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
   /category/{id}:
     get:
       description: Search category by Id
@@ -194,8 +213,6 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '500':
           $ref: '#/components/responses/ServerError'
-      security:
-        - BearerAuth: [ ]
     put:
       description: Update category
       tags:
@@ -208,9 +225,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CategoryRequest'
+              $ref: '#/components/schemas/CategoryPutRequest'
       responses:
-        '204':
+        '201':
           description: No Content
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -241,8 +258,25 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '500':
           $ref: '#/components/responses/ServerError'
-      security:
-        - BearerAuth: [ ]
+    post:
+      description: Create new movie
+      tags:
+        - movie
+      summary: Create new movie
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MoviePostRequest'
+      responses:
+        '201': OK
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
   /movie/{id}:
     get:
       description: Search movie by Id
@@ -264,8 +298,6 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '500':
           $ref: '#/components/responses/ServerError'
-      security:
-        - BearerAuth: [ ]
     put:
       description: Update movie
       tags:
@@ -278,7 +310,88 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MovieRequest'
+              $ref: '#/components/schemas/MoviePutRequest'
+      responses:
+        '204':
+          description: No Content
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
+      security:
+        - BearerAuth: [ ]
+  /promotion:
+    get:
+      description: Search all promotions
+      tags:
+        - promotion
+      summary: Search all promotions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PromotionSearchResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    post:
+      description: Create new promotion
+      tags:
+        - promotion
+      summary: Create new promotion
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PromotionPostRequest'
+      responses:
+        '201': OK
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /promotion/{id}:
+    get:
+      description: Search promotion by Id
+      tags:
+        - promotion
+      summary: Search promotion by Id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Promotion'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    put:
+      description: Update promotion
+      tags:
+        - promotion
+      summary: Update promotion
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PromotionPutRequest'
       responses:
         '204':
           description: No Content
@@ -325,7 +438,8 @@ components:
       name: category
       in: query
       schema:
-        type: string
+        type: integer
+        format: int64
   schemas:
     ApiError:
       type: object
@@ -453,7 +567,12 @@ components:
           items:
             $ref: '#/components/schemas/Role'
             default: []
-    CategoryRequest:
+    CategoryPutRequest:
+      type: object
+      properties:
+        name:
+          type: string
+    CategoryPostRequest:
       type: object
       properties:
         name:
@@ -461,6 +580,9 @@ components:
     Category:
       type: object
       properties:
+        id:
+          type: integer
+          format: int64
         name:
           type: string
           example: Science Fiction
@@ -476,15 +598,45 @@ components:
     Movie:
       type: object
       properties:
+        id:
+          type: integer
+          format: int64
         name:
-          type: object
+          type: string
         duration:
           type: integer
         description:
           type: string
-    MovieRequest:
-      allOf:
-        - $ref: '#/components/schemas/Movie'
+        trailerLink:
+          type: string
+    MoviePostRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        duration:
+          type: integer
+        description:
+          type: string
+        trailerLink:
+          type: string
+        category:
+          type: integer
+          format: int64
+    MoviePutRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        duration:
+          type: integer
+        description:
+          type: string
+        trailerLink:
+          type: string
+        category:
+          type: integer
+          format: int64
     MovieSearchResponse:
       allOf:
         - $ref: '#/components/schemas/SearchResponse'
@@ -494,6 +646,39 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/Movie'
+    Promotion:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        title:
+          type: string
+        content:
+          type: string
+    PromotionPutRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+    PromotionPostRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+    PromotionSearchResponse:
+      allOf:
+        - $ref: '#/components/schemas/SearchResponse'
+        - type: object
+          properties:
+            records:
+              type: array
+              items:
+                $ref: '#/components/schemas/Promotion'
   responses:
     BadRequest:
       description: Bad request

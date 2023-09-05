@@ -10,56 +10,56 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * Category
+ * PromotionPostRequest
  */
 @Validated
 
 
-public class Category  implements Serializable  {
+public class PromotionPostRequest  implements Serializable  {
   private static final long serialVersionUID = 1L;
 
-  @JsonProperty("id")
-  private Long id = null;
+  @JsonProperty("title")
+  private String title = null;
 
-  @JsonProperty("name")
-  private String name = null;
+  @JsonProperty("content")
+  private String content = null;
 
-  public Category id(Long id) {
-    this.id = id;
+  public PromotionPostRequest title(String title) {
+    this.title = title;
     return this;
   }
 
   /**
-   * Get id
-   * @return id
+   * Get title
+   * @return title
    **/
   @Schema(description = "")
   
-    public Long getId() {
-    return id;
+    public String getTitle() {
+    return title;
   }
 
-  public void setId(Long id) {
-    this.id = id;
+  public void setTitle(String title) {
+    this.title = title;
   }
 
-  public Category name(String name) {
-    this.name = name;
+  public PromotionPostRequest content(String content) {
+    this.content = content;
     return this;
   }
 
   /**
-   * Get name
-   * @return name
+   * Get content
+   * @return content
    **/
-  @Schema(example = "Science Fiction", description = "")
+  @Schema(description = "")
   
-    public String getName() {
-    return name;
+    public String getContent() {
+    return content;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public void setContent(String content) {
+    this.content = content;
   }
 
 
@@ -71,23 +71,23 @@ public class Category  implements Serializable  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Category category = (Category) o;
-    return Objects.equals(this.id, category.id) &&
-        Objects.equals(this.name, category.name);
+    PromotionPostRequest promotionPostRequest = (PromotionPostRequest) o;
+    return Objects.equals(this.title, promotionPostRequest.title) &&
+        Objects.equals(this.content, promotionPostRequest.content);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name);
+    return Objects.hash(title, content);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Category {\n");
+    sb.append("class PromotionPostRequest {\n");
     
-    sb.append("    id: ").append(toIndentedString(id)).append("\n");
-    sb.append("    name: ").append(toIndentedString(name)).append("\n");
+    sb.append("    title: ").append(toIndentedString(title)).append("\n");
+    sb.append("    content: ").append(toIndentedString(content)).append("\n");
     sb.append("}");
     return sb.toString();
   }

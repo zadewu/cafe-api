@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface MovieCategoryRepository extends JpaRepository<MovieCategoryEntity, Long> {
     Optional<MovieCategoryEntity> findMovieCategoryEntitiesByCategoryName(String name);
     Page<MovieCategoryEntity> findAll(Pageable pageable);
+
 }

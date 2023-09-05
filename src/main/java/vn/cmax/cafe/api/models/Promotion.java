@@ -10,21 +10,24 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * Category
+ * Promotion
  */
 @Validated
 
 
-public class Category  implements Serializable  {
+public class Promotion  implements Serializable  {
   private static final long serialVersionUID = 1L;
 
   @JsonProperty("id")
   private Long id = null;
 
-  @JsonProperty("name")
-  private String name = null;
+  @JsonProperty("title")
+  private String title = null;
 
-  public Category id(Long id) {
+  @JsonProperty("content")
+  private String content = null;
+
+  public Promotion id(Long id) {
     this.id = id;
     return this;
   }
@@ -43,23 +46,42 @@ public class Category  implements Serializable  {
     this.id = id;
   }
 
-  public Category name(String name) {
-    this.name = name;
+  public Promotion title(String title) {
+    this.title = title;
     return this;
   }
 
   /**
-   * Get name
-   * @return name
+   * Get title
+   * @return title
    **/
-  @Schema(example = "Science Fiction", description = "")
+  @Schema(description = "")
   
-    public String getName() {
-    return name;
+    public String getTitle() {
+    return title;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public void setTitle(String title) {
+    this.title = title;
+  }
+
+  public Promotion content(String content) {
+    this.content = content;
+    return this;
+  }
+
+  /**
+   * Get content
+   * @return content
+   **/
+  @Schema(description = "")
+  
+    public String getContent() {
+    return content;
+  }
+
+  public void setContent(String content) {
+    this.content = content;
   }
 
 
@@ -71,23 +93,25 @@ public class Category  implements Serializable  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Category category = (Category) o;
-    return Objects.equals(this.id, category.id) &&
-        Objects.equals(this.name, category.name);
+    Promotion promotion = (Promotion) o;
+    return Objects.equals(this.id, promotion.id) &&
+        Objects.equals(this.title, promotion.title) &&
+        Objects.equals(this.content, promotion.content);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name);
+    return Objects.hash(id, title, content);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Category {\n");
+    sb.append("class Promotion {\n");
     
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
-    sb.append("    name: ").append(toIndentedString(name)).append("\n");
+    sb.append("    title: ").append(toIndentedString(title)).append("\n");
+    sb.append("    content: ").append(toIndentedString(content)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -10,16 +10,13 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * Movie
+ * MoviePutRequest
  */
 @Validated
 
 
-public class Movie  implements Serializable  {
+public class MoviePutRequest  implements Serializable  {
   private static final long serialVersionUID = 1L;
-
-  @JsonProperty("id")
-  private Long id = null;
 
   @JsonProperty("name")
   private String name = null;
@@ -33,26 +30,10 @@ public class Movie  implements Serializable  {
   @JsonProperty("trailerLink")
   private String trailerLink = null;
 
-  public Movie id(Long id) {
-    this.id = id;
-    return this;
-  }
+  @JsonProperty("category")
+  private Long category = null;
 
-  /**
-   * Get id
-   * @return id
-   **/
-  @Schema(description = "")
-  
-    public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public Movie name(String name) {
+  public MoviePutRequest name(String name) {
     this.name = name;
     return this;
   }
@@ -71,7 +52,7 @@ public class Movie  implements Serializable  {
     this.name = name;
   }
 
-  public Movie duration(Integer duration) {
+  public MoviePutRequest duration(Integer duration) {
     this.duration = duration;
     return this;
   }
@@ -90,7 +71,7 @@ public class Movie  implements Serializable  {
     this.duration = duration;
   }
 
-  public Movie description(String description) {
+  public MoviePutRequest description(String description) {
     this.description = description;
     return this;
   }
@@ -109,7 +90,7 @@ public class Movie  implements Serializable  {
     this.description = description;
   }
 
-  public Movie trailerLink(String trailerLink) {
+  public MoviePutRequest trailerLink(String trailerLink) {
     this.trailerLink = trailerLink;
     return this;
   }
@@ -128,6 +109,25 @@ public class Movie  implements Serializable  {
     this.trailerLink = trailerLink;
   }
 
+  public MoviePutRequest category(Long category) {
+    this.category = category;
+    return this;
+  }
+
+  /**
+   * Get category
+   * @return category
+   **/
+  @Schema(description = "")
+  
+    public Long getCategory() {
+    return category;
+  }
+
+  public void setCategory(Long category) {
+    this.category = category;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -137,29 +137,29 @@ public class Movie  implements Serializable  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Movie movie = (Movie) o;
-    return Objects.equals(this.id, movie.id) &&
-        Objects.equals(this.name, movie.name) &&
-        Objects.equals(this.duration, movie.duration) &&
-        Objects.equals(this.description, movie.description) &&
-        Objects.equals(this.trailerLink, movie.trailerLink);
+    MoviePutRequest moviePutRequest = (MoviePutRequest) o;
+    return Objects.equals(this.name, moviePutRequest.name) &&
+        Objects.equals(this.duration, moviePutRequest.duration) &&
+        Objects.equals(this.description, moviePutRequest.description) &&
+        Objects.equals(this.trailerLink, moviePutRequest.trailerLink) &&
+        Objects.equals(this.category, moviePutRequest.category);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, duration, description, trailerLink);
+    return Objects.hash(name, duration, description, trailerLink, category);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Movie {\n");
+    sb.append("class MoviePutRequest {\n");
     
-    sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    duration: ").append(toIndentedString(duration)).append("\n");
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    trailerLink: ").append(toIndentedString(trailerLink)).append("\n");
+    sb.append("    category: ").append(toIndentedString(category)).append("\n");
     sb.append("}");
     return sb.toString();
   }

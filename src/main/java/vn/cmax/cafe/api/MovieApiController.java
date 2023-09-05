@@ -1,44 +1,30 @@
 package vn.cmax.cafe.api;
 
-import vn.cmax.cafe.api.models.ApiError;
-import vn.cmax.cafe.api.models.Movie;
-import vn.cmax.cafe.api.models.MovieRequest;
-import vn.cmax.cafe.api.models.MovieSearchResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-import vn.cmax.cafe.category.MovieCategoryService;
-
-import javax.validation.constraints.*;
-import javax.validation.Valid;
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import vn.cmax.cafe.api.models.Movie;
+import vn.cmax.cafe.api.models.MoviePostRequest;
+import vn.cmax.cafe.api.models.MoviePutRequest;
+import vn.cmax.cafe.api.models.MovieSearchResponse;
+import vn.cmax.cafe.exception.CmaxException;
+import vn.cmax.cafe.movie.MovieService;
 
 @javax.annotation.Generated(
     value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
-    date = "2023-08-15T22:58:35.895914+07:00[Asia/Ho_Chi_Minh]")
+    date = "2023-08-27T21:24:51.194362+07:00[Asia/Ho_Chi_Minh]")
 @RestController
 public class MovieApiController implements MovieApi {
 
@@ -48,24 +34,22 @@ public class MovieApiController implements MovieApi {
 
   private final HttpServletRequest request;
 
-  private final MovieCategoryService categoryService;
+  private final MovieService movieService;
 
   @org.springframework.beans.factory.annotation.Autowired
-  public MovieApiController(ObjectMapper objectMapper, HttpServletRequest request, MovieCategoryService categoryService) {
+  public MovieApiController(
+      ObjectMapper objectMapper, HttpServletRequest request, MovieService movieService) {
     this.objectMapper = objectMapper;
     this.request = request;
-    this.categoryService = categoryService;
+    this.movieService = movieService;
   }
 
   public ResponseEntity<MovieSearchResponse> movieGet(
-      @Min(1)
+      @Min(0)
           @Parameter(
               in = ParameterIn.QUERY,
               description = "",
-              schema =
-                  @Schema(
-                      allowableValues = {},
-                      minimum = "1"))
+              schema = @Schema(allowableValues = {}))
           @Valid
           @RequestParam(value = "page", required = false)
           Integer page,
@@ -85,30 +69,29 @@ public class MovieApiController implements MovieApi {
       @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema())
           @Valid
           @RequestParam(value = "category", required = false)
-          String category) {
+          Long category) {
     String accept = request.getHeader("Accept");
     if (accept != null && accept.contains("application/json")) {
-
+      MovieSearchResponse response = this.movieService.findAllMovies(page, pageSize, category);
+      return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
-    return new ResponseEntity<MovieSearchResponse>(HttpStatus.NOT_IMPLEMENTED);
+    return new ResponseEntity<>(new MovieSearchResponse(), HttpStatus.OK);
   }
 
-  public ResponseEntity<Movie> movieIdGet(
+  public ResponseEntity movieIdGet(
       @Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
           @PathVariable("id")
           Long id) {
     String accept = request.getHeader("Accept");
     if (accept != null && accept.contains("application/json")) {
       try {
-        return new ResponseEntity<Movie>(
-            objectMapper.readValue(
-                "{\n  \"duration\" : 0,\n  \"name\" : { },\n  \"description\" : \"description\"\n}",
-                Movie.class),
-            HttpStatus.NOT_IMPLEMENTED);
-      } catch (IOException e) {
-        log.error("Couldn't serialize response for content type application/json", e);
-        return new ResponseEntity<Movie>(HttpStatus.INTERNAL_SERVER_ERROR);
+        Movie movie = this.movieService.findMovieById(id);
+        if (movie != null) {
+          return new ResponseEntity<Movie>(movie, HttpStatus.OK);
+        }
+        return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+      } catch (CmaxException exception) {
+        return new ResponseEntity(exception.getMessage(), exception.getStatus());
       }
     }
 
@@ -122,8 +105,27 @@ public class MovieApiController implements MovieApi {
       @Parameter(in = ParameterIn.DEFAULT, description = "", required = true, schema = @Schema())
           @Valid
           @RequestBody
-          MovieRequest body) {
+          MoviePutRequest body) {
     String accept = request.getHeader("Accept");
-    return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
+    if (accept != null && accept.contains("application/json")) {
+      this.movieService.updateMovie(id, body);
+      return new ResponseEntity<Void>(HttpStatus.ACCEPTED);
+    }
+    return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  public ResponseEntity<Void> moviePost(
+      @Parameter(in = ParameterIn.DEFAULT, description = "", required = true, schema = @Schema())
+          @Valid
+          @RequestBody
+          MoviePostRequest body) {
+    String accept = request.getHeader("Accept");
+    if (accept != null && accept.contains("application/json")) {
+      Movie movie = this.movieService.createMovie(body);
+      if (movie != null) {
+        return new ResponseEntity<>(HttpStatus.CREATED);
+      }
+    }
+    return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }

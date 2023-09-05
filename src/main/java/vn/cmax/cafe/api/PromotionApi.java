@@ -20,23 +20,22 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import vn.cmax.cafe.api.models.ApiError;
-import vn.cmax.cafe.api.models.Movie;
-import vn.cmax.cafe.api.models.MoviePostRequest;
-import vn.cmax.cafe.api.models.MoviePutRequest;
-import vn.cmax.cafe.api.models.MovieSearchResponse;
+import vn.cmax.cafe.api.models.Promotion;
+import vn.cmax.cafe.api.models.PromotionPostRequest;
+import vn.cmax.cafe.api.models.PromotionPutRequest;
+import vn.cmax.cafe.api.models.PromotionSearchResponse;
 
 @javax.annotation.Generated(
     value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
     date = "2023-08-27T21:24:51.194362+07:00[Asia/Ho_Chi_Minh]")
 @Validated
-public interface MovieApi {
+public interface PromotionApi {
 
   @Operation(
-      summary = "Retrieve all movies",
-      description = "Retrieve all movies",
-      tags = {"movie"})
+      summary = "Search all promotions",
+      description = "Search all promotions",
+      tags = {"promotion"})
   @ApiResponses(
       value = {
         @ApiResponse(
@@ -45,7 +44,7 @@ public interface MovieApi {
             content =
                 @Content(
                     mediaType = "application/json",
-                    schema = @Schema(implementation = MovieSearchResponse.class))),
+                    schema = @Schema(implementation = PromotionSearchResponse.class))),
         @ApiResponse(
             responseCode = "401",
             description = "Unauthorized",
@@ -62,40 +61,15 @@ public interface MovieApi {
                     schema = @Schema(implementation = ApiError.class)))
       })
   @RequestMapping(
-      value = "/movie",
+      value = "/promotion",
       produces = {"application/json"},
       method = RequestMethod.GET)
-  ResponseEntity<MovieSearchResponse> movieGet(
-      @Min(0)
-          @Parameter(
-              in = ParameterIn.QUERY,
-              description = "",
-              schema = @Schema(allowableValues = {}))
-          @Valid
-          @RequestParam(value = "page", required = false)
-          Integer page,
-      @Min(10)
-          @Max(50)
-          @Parameter(
-              in = ParameterIn.QUERY,
-              description = "",
-              schema =
-                  @Schema(
-                      allowableValues = {},
-                      minimum = "10",
-                      maximum = "50"))
-          @Valid
-          @RequestParam(value = "pageSize", required = false)
-          Integer pageSize,
-      @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema())
-          @Valid
-          @RequestParam(value = "category", required = false)
-          Long category);
+  ResponseEntity<PromotionSearchResponse> promotionGet();
 
   @Operation(
-      summary = "Search movie by Id",
-      description = "Search movie by Id",
-      tags = {"movie"})
+      summary = "Search promotion by Id",
+      description = "Search promotion by Id",
+      tags = {"promotion"})
   @ApiResponses(
       value = {
         @ApiResponse(
@@ -104,7 +78,7 @@ public interface MovieApi {
             content =
                 @Content(
                     mediaType = "application/json",
-                    schema = @Schema(implementation = Movie.class))),
+                    schema = @Schema(implementation = Promotion.class))),
         @ApiResponse(
             responseCode = "400",
             description = "Bad request",
@@ -128,19 +102,19 @@ public interface MovieApi {
                     schema = @Schema(implementation = ApiError.class)))
       })
   @RequestMapping(
-      value = "/movie/{id}",
+      value = "/promotion/{id}",
       produces = {"application/json"},
       method = RequestMethod.GET)
-  ResponseEntity<Movie> movieIdGet(
+  ResponseEntity<Promotion> promotionIdGet(
       @Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
           @PathVariable("id")
           Long id);
 
   @Operation(
-      summary = "Update movie",
-      description = "Update movie",
+      summary = "Update promotion",
+      description = "Update promotion",
       security = {@SecurityRequirement(name = "BearerAuth")},
-      tags = {"movie"})
+      tags = {"promotion"})
   @ApiResponses(
       value = {
         @ApiResponse(responseCode = "204", description = "No Content"),
@@ -167,23 +141,23 @@ public interface MovieApi {
                     schema = @Schema(implementation = ApiError.class)))
       })
   @RequestMapping(
-      value = "/movie/{id}",
+      value = "/promotion/{id}",
       produces = {"application/json"},
       consumes = {"application/json"},
       method = RequestMethod.PUT)
-  ResponseEntity<Void> movieIdPut(
+  ResponseEntity<Void> promotionIdPut(
       @Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
           @PathVariable("id")
           Long id,
       @Parameter(in = ParameterIn.DEFAULT, description = "", required = true, schema = @Schema())
           @Valid
           @RequestBody
-          MoviePutRequest body);
+          PromotionPutRequest body);
 
   @Operation(
-      summary = "Create new movie",
-      description = "Create new movie",
-      tags = {"movie"})
+      summary = "Create new promotion",
+      description = "Create new promotion",
+      tags = {"promotion"})
   @ApiResponses(
       value = {
         @ApiResponse(
@@ -209,13 +183,13 @@ public interface MovieApi {
                     schema = @Schema(implementation = ApiError.class)))
       })
   @RequestMapping(
-      value = "/movie",
+      value = "/promotion",
       produces = {"application/json"},
       consumes = {"application/json"},
       method = RequestMethod.POST)
-  ResponseEntity<Void> moviePost(
+  ResponseEntity<Void> promotionPost(
       @Parameter(in = ParameterIn.DEFAULT, description = "", required = true, schema = @Schema())
           @Valid
           @RequestBody
-          MoviePostRequest body);
+          PromotionPostRequest body);
 }

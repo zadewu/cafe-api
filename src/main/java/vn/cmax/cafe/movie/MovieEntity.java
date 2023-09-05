@@ -27,10 +27,13 @@ public class MovieEntity extends DomainAudit implements Serializable {
     private String movieName;
 
     @Column(name = "duration")
-    private String duration;
+    private Integer duration;
 
     @Column(name = "description")
     private String description;
+
+    @Column(name = "trailer_link")
+    private String trailerLink;
 
     @ManyToOne
     @JoinColumn(name = "category_id", foreignKey = @ForeignKey(name = "fk_movie_category"))

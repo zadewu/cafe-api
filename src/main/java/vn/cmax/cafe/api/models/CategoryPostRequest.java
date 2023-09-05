@@ -10,40 +10,18 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * Category
+ * CategoryPostRequest
  */
 @Validated
 
 
-public class Category  implements Serializable  {
+public class CategoryPostRequest  implements Serializable  {
   private static final long serialVersionUID = 1L;
-
-  @JsonProperty("id")
-  private Long id = null;
 
   @JsonProperty("name")
   private String name = null;
 
-  public Category id(Long id) {
-    this.id = id;
-    return this;
-  }
-
-  /**
-   * Get id
-   * @return id
-   **/
-  @Schema(description = "")
-  
-    public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public Category name(String name) {
+  public CategoryPostRequest name(String name) {
     this.name = name;
     return this;
   }
@@ -52,7 +30,7 @@ public class Category  implements Serializable  {
    * Get name
    * @return name
    **/
-  @Schema(example = "Science Fiction", description = "")
+  @Schema(description = "")
   
     public String getName() {
     return name;
@@ -71,22 +49,20 @@ public class Category  implements Serializable  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Category category = (Category) o;
-    return Objects.equals(this.id, category.id) &&
-        Objects.equals(this.name, category.name);
+    CategoryPostRequest categoryPostRequest = (CategoryPostRequest) o;
+    return Objects.equals(this.name, categoryPostRequest.name);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name);
+    return Objects.hash(name);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Category {\n");
+    sb.append("class CategoryPostRequest {\n");
     
-    sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("}");
     return sb.toString();
