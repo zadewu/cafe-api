@@ -4,31 +4,40 @@
  */
 package vn.cmax.cafe.api;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import vn.cmax.cafe.api.models.ApiError;
 import vn.cmax.cafe.api.models.Promotion;
 import vn.cmax.cafe.api.models.PromotionPostRequest;
 import vn.cmax.cafe.api.models.PromotionPutRequest;
 import vn.cmax.cafe.api.models.PromotionSearchResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.CookieValue;
+
+import javax.validation.Valid;
+import javax.validation.constraints.*;
+import java.util.List;
+import java.util.Map;
 
 @javax.annotation.Generated(
     value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
-    date = "2023-08-27T21:24:51.194362+07:00[Asia/Ho_Chi_Minh]")
+    date = "2023-09-06T22:55:26.603189+07:00[Asia/Ho_Chi_Minh]")
 @Validated
 public interface PromotionApi {
 
@@ -64,7 +73,29 @@ public interface PromotionApi {
       value = "/promotion",
       produces = {"application/json"},
       method = RequestMethod.GET)
-  ResponseEntity<PromotionSearchResponse> promotionGet();
+  ResponseEntity<PromotionSearchResponse> promotionGet(
+          @Min(0)
+          @Parameter(
+                  in = ParameterIn.QUERY,
+                  description = "",
+                  schema = @Schema(allowableValues = {}))
+          @Valid
+          @RequestParam(value = "page", required = false)
+          Integer page,
+          @Min(10)
+          @Max(50)
+          @Parameter(
+                  in = ParameterIn.QUERY,
+                  description = "",
+                  schema =
+                  @Schema(
+                          allowableValues = {},
+                          minimum = "10",
+                          maximum = "50"))
+          @Valid
+          @RequestParam(value = "pageSize", required = false)
+          Integer pageSize
+  );
 
   @Operation(
       summary = "Search promotion by Id",
@@ -157,6 +188,7 @@ public interface PromotionApi {
   @Operation(
       summary = "Create new promotion",
       description = "Create new promotion",
+      security = {@SecurityRequirement(name = "BearerAuth")},
       tags = {"promotion"})
   @ApiResponses(
       value = {

@@ -6,7 +6,8 @@ package vn.cmax.cafe.api;
 
 import vn.cmax.cafe.api.models.ApiError;
 import vn.cmax.cafe.api.models.Category;
-import vn.cmax.cafe.api.models.CategoryRequest;
+import vn.cmax.cafe.api.models.CategoryPostRequest;
+import vn.cmax.cafe.api.models.CategoryPutRequest;
 import vn.cmax.cafe.api.models.CategorySearchResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -36,14 +37,13 @@ import java.util.Map;
 
 @javax.annotation.Generated(
     value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
-    date = "2023-08-15T22:58:35.895914+07:00[Asia/Ho_Chi_Minh]")
+    date = "2023-09-06T22:55:26.603189+07:00[Asia/Ho_Chi_Minh]")
 @Validated
 public interface CategoryApi {
 
   @Operation(
       summary = "Retrieve all categories",
       description = "Retrieve all categories",
-      security = {@SecurityRequirement(name = "BearerAuth")},
       tags = {"category"})
   @ApiResponses(
       value = {
@@ -74,14 +74,11 @@ public interface CategoryApi {
       produces = {"application/json"},
       method = RequestMethod.GET)
   ResponseEntity<CategorySearchResponse> categoryGet(
-      @Min(1)
+      @Min(0)
           @Parameter(
               in = ParameterIn.QUERY,
               description = "",
-              schema =
-                  @Schema(
-                      allowableValues = {},
-                      minimum = "1"))
+              schema = @Schema(allowableValues = {}))
           @Valid
           @RequestParam(value = "page", required = false)
           Integer page,
@@ -102,7 +99,6 @@ public interface CategoryApi {
   @Operation(
       summary = "Update category",
       description = "Search category by Id",
-      security = {@SecurityRequirement(name = "BearerAuth")},
       tags = {"category"})
   @ApiResponses(
       value = {
@@ -151,7 +147,7 @@ public interface CategoryApi {
       tags = {"category"})
   @ApiResponses(
       value = {
-        @ApiResponse(responseCode = "204", description = "No Content"),
+        @ApiResponse(responseCode = "201", description = "No Content"),
         @ApiResponse(
             responseCode = "400",
             description = "Bad request",
@@ -186,5 +182,45 @@ public interface CategoryApi {
       @Parameter(in = ParameterIn.DEFAULT, description = "", required = true, schema = @Schema())
           @Valid
           @RequestBody
-          CategoryRequest body);
+          CategoryPutRequest body);
+
+  @Operation(
+      summary = "Create new category",
+      description = "Create new category",
+      security = {@SecurityRequirement(name = "BearerAuth")},
+      tags = {"category"})
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "400",
+            description = "Bad request",
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ApiError.class))),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized",
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ApiError.class))),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Unauthorized",
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ApiError.class)))
+      })
+  @RequestMapping(
+      value = "/category",
+      produces = {"application/json"},
+      consumes = {"application/json"},
+      method = RequestMethod.POST)
+  ResponseEntity<Void> categoryPost(
+      @Parameter(in = ParameterIn.DEFAULT, description = "", required = true, schema = @Schema())
+          @Valid
+          @RequestBody
+          CategoryPostRequest body);
 }
