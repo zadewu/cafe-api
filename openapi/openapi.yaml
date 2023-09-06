@@ -192,6 +192,8 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '500':
           $ref: '#/components/responses/ServerError'
+      security:
+        - BearerAuth: [ ]
   /category/{id}:
     get:
       description: Search category by Id
@@ -277,6 +279,8 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '500':
           $ref: '#/components/responses/ServerError'
+      security:
+        - BearerAuth: [ ]
   /movie/{id}:
     get:
       description: Search movie by Id
@@ -358,6 +362,8 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '500':
           $ref: '#/components/responses/ServerError'
+      security:
+        - BearerAuth: [ ]
   /promotion/{id}:
     get:
       description: Search promotion by Id

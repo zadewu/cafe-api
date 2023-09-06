@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import vn.cmax.cafe.api.models.Category;
+import vn.cmax.cafe.api.models.CategoryPostRequest;
 import vn.cmax.cafe.api.models.CategorySearchResponse;
 import vn.cmax.cafe.exception.CmaxException;
 import vn.cmax.cafe.mapper.CategoryMapper;
@@ -39,5 +40,9 @@ public class MovieCategoryService {
             return CategoryMapper.INSTANCE.fromEntity(entityOptional.get());
         }
         return null;
+    }
+
+    public Categroy createNewCategory(CategoryPostRequest request) {
+
     }
 }
