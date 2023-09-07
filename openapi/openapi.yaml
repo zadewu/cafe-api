@@ -17,6 +17,8 @@ tags:
     description: Operation about promotion
   - name: user
     description: Operation about user
+  - name: file
+    description: Operation about file
 paths:
   /auth/login:
     post:
@@ -412,8 +414,34 @@ paths:
           $ref: '#/components/responses/ServerError'
       security:
         - BearerAuth: [ ]
-
-#Empty lie for separation
+  /file/upload:
+    post:
+      description: Upload file
+      tags:
+        - file
+      summary: Upload file
+      requestBody:
+        content:
+          multipart/*:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Url of file
+          type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
+      security:
+        - BearerAuth: [ ]
+  #Empty lie for separation
 components:
   parameters:
     id:
