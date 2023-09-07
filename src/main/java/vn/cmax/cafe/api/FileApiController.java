@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import vn.cmax.cafe.configuration.model.CmaxConfigurationProperties;
 import vn.cmax.cafe.file.FileService;
 
 @javax.annotation.Generated(
@@ -30,13 +31,18 @@ public class FileApiController implements FileApi {
 
   private final HttpServletRequest request;
   private final FileService fileService;
+  private final CmaxConfigurationProperties configurationProperties;
 
   @org.springframework.beans.factory.annotation.Autowired
   public FileApiController(
-      ObjectMapper objectMapper, HttpServletRequest request, FileService fileService) {
+      ObjectMapper objectMapper,
+      HttpServletRequest request,
+      FileService fileService,
+      CmaxConfigurationProperties configurationProperties) {
     this.objectMapper = objectMapper;
     this.request = request;
     this.fileService = fileService;
+    this.configurationProperties = configurationProperties;
   }
 
   public ResponseEntity<String> fileUploadPost(
@@ -48,7 +54,8 @@ public class FileApiController implements FileApi {
     if (StringUtils.isBlank(fileName)) {
       return new ResponseEntity<String>("Error when upload file", HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    String remoteFileLocation = request.getServerName() + "/files/" + fileName;
-    return new ResponseEntity<String>(remoteFileLocation, HttpStatus.CREATED);
+    String domain = StringUtils.isBlank(configurationProperties.getDomainName()) ? "localhost" : configurationProperties.getDomainName();
+    String remoteFileLocation = domain + fileName;
+    return new ResponseEntity<String>(remoteFileLocation.replaceAll("\\s",""), HttpStatus.CREATED);
   }
 }

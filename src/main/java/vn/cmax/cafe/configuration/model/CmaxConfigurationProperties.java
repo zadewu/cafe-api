@@ -9,4 +9,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CmaxConfigurationProperties {
     private String fileDirectory;
+    private String domainName;
 }

@@ -39,7 +39,7 @@ public class FileService {
       String finalName = filename + "." + fileExtension;
       Path finalFilePath = filePath.resolve(finalName);
       Files.write(finalFilePath, multipartFile.getBytes());
-      return finalName;
+      return finalFilePath.toString();
     } catch (IOException ex) {
       log.error("Error while saving file", ex);
     }
