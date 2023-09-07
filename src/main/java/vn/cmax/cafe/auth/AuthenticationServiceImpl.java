@@ -11,10 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import vn.cmax.cafe.api.models.AuthenticationRequest;
 import vn.cmax.cafe.api.models.AuthenticationResponse;
 import vn.cmax.cafe.configuration.model.SecurityProperties;
+import vn.cmax.cafe.exception.CmaxException;
 import vn.cmax.cafe.exception.CmaxSecurityException;
 import vn.cmax.cafe.security.jwt.JwtTokenManager;
 import vn.cmax.cafe.security.jwt.JwtTokenService;
@@ -39,6 +41,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   private SecurityProperties securityProperties;
 
   private UserRepository userRepository;
+  private PasswordEncoder passwordEncoder;
 
   @Override
   public AuthenticationResponse login(
@@ -50,6 +53,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
       throw new NoSuchElementException("No user found");
     }
     UserEntity userEntity = userEntityOptional.get();
+    String userPassword = userEntity.getPassword();
+    if (!passwordEncoder.matches(authenticationRequest.getPassword(), userPassword))  {
+      throw new CmaxSecurityException(
+              CmaxSecurityException.INVALID_USERNAME_PASSWORD_ERR_MESSAGE, HttpStatus.UNAUTHORIZED);
+    }
     CacheToken token = setJwtTokenForUser(userEntity, response);
     AuthenticationResponse authenticationResponse = new AuthenticationResponse();
     authenticationResponse.username(userEntity.getUsername())
