@@ -3,7 +3,7 @@ package vn.cmax.cafe.category;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
-
+import javax.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,11 +13,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import vn.cmax.cafe.api.models.Category;
 import vn.cmax.cafe.api.models.CategoryPostRequest;
-import vn.cmax.cafe.api.models.CategoryPutRequest;import vn.cmax.cafe.api.models.CategorySearchResponse;
+import vn.cmax.cafe.api.models.CategoryPutRequest;
+import vn.cmax.cafe.api.models.CategorySearchResponse;
 import vn.cmax.cafe.exception.CmaxException;
 import vn.cmax.cafe.exception.ValidationException;
 import vn.cmax.cafe.mapper.CategoryMapper;
-import javax.transaction.Transactional;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -39,16 +39,16 @@ public class MovieCategoryService {
     return response;
   }
 
-  public Category findById(Long id) {
+  public Category findById(Long id)throws CmaxException {
     Optional<MovieCategoryEntity> entityOptional = this.categoryRepository.findById(id);
-    if (entityOptional.isPresent()) {
-      return CategoryMapper.INSTANCE.fromEntity(entityOptional.get());
+    if (entityOptional.isEmpty()) {
+      throw new ValidationException("Cannot find category with id = " + id);
     }
-    return null;
+      return CategoryMapper.INSTANCE.fromEntity(entityOptional.get());
   }
 
   @Transactional
-  public Category createNewCategory(CategoryPostRequest request) {
+  public Category createNewCategory(CategoryPostRequest request)throws CmaxException {
     try {
       Objects.requireNonNull(request.getName());
     } catch (NullPointerException ex) {
@@ -61,7 +61,7 @@ public class MovieCategoryService {
   }
 
   @Transactional
-  public void updateCategory(Long id, CategoryPutRequest request) {
+  public void updateCategory(Long id, CategoryPutRequest request) throws CmaxException{
     try {
       Objects.requireNonNull(request.getName());
     } catch (NullPointerException ex) {

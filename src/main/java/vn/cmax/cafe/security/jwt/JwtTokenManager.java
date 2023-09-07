@@ -6,22 +6,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import vn.cmax.cafe.configuration.model.SecurityProperties;
-import vn.cmax.cafe.exception.ApiErrorType;
-import vn.cmax.cafe.security.CustomUserDetailService;
+import vn.cmax.cafe.exception.CmaxException;
+import vn.cmax.cafe.exception.TechnicalException;
 import vn.cmax.cafe.security.jwt.model.Token;
 import vn.cmax.cafe.user.UserEntity;
 import vn.cmax.cafe.user.UserRepository;
-import vn.cmax.cafe.user.UserService;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.DatatypeConverter;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.security.MessageDigest;
@@ -57,14 +54,18 @@ public class JwtTokenManager {
     this.secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
   }
 
-  public Token createToken(UserEntity userEntity, TokenType tokenType)
-      throws NoSuchAlgorithmException {
+  public Token createToken(UserEntity userEntity, TokenType tokenType) throws CmaxException {
     Date now = Calendar.getInstance().getTime();
     String jwId = UUID.randomUUID().toString();
 
     String fingerPrint = generateFingerprint();
-    String fingerPrintHash = computeFingerPrintHash(fingerPrint);
-
+    String fingerPrintHash;
+    try {
+      fingerPrintHash = computeFingerPrintHash(fingerPrint);
+    } catch (NoSuchAlgorithmException ex) {
+      log.error("computeFingerPrintHash has exception", ex);
+      throw new TechnicalException();
+    }
     String subject = userEntity.getId().toString();
     Claims claims = Jwts.claims();
     claims.setSubject(subject);
@@ -91,14 +92,14 @@ public class JwtTokenManager {
   }
 
   public JwtAuthentication authenticate(
-      String token, TokenType jwtTokenType, HttpServletRequest request) throws NoSuchAlgorithmException {
+      String token, TokenType jwtTokenType, HttpServletRequest request)
+      throws NoSuchAlgorithmException {
     // step 1: check if finger print is in cookie
     String fingerprintFromCookie = getFingerprintFromCookie(request, jwtTokenType);
     if (fingerprintFromCookie == null) {
       return JwtAuthentication.builder()
           .success(false)
           .message("Fingerprint wasn't set into cookie request header")
-          .errorType(ApiErrorType.UNAUTHORIZED)
           .build();
     }
 
@@ -107,31 +108,19 @@ public class JwtTokenManager {
     try {
       claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
     } catch (ExpiredJwtException e) {
-      ApiErrorType errorType =
-          jwtTokenType == TokenType.REFRESH_TOKEN
-              ? ApiErrorType.REFRESH_TOKEN_EXPIRED
-              : ApiErrorType.ACCESS_TOKEN_EXPIRED;
       String errorMessage =
           MessageFormat.format(
               "[{0}] {1} has expired",
-              this.getClass().getCanonicalName(), errorType.name() + " has expired");
+              this.getClass().getCanonicalName(), jwtTokenType + " has expired");
       log.warn(errorMessage, e);
-      return JwtAuthentication.builder()
-          .success(false)
-          .message(errorMessage)
-          .errorType(errorType)
-          .build();
+      return JwtAuthentication.builder().success(false).message(errorMessage).build();
     } catch (JwtException | IllegalArgumentException | UsernameNotFoundException e1) {
       String errorMessage =
           MessageFormat.format(
               "[{0}] Exception happens when authenticate jwt token",
               this.getClass().getCanonicalName());
       log.warn(errorMessage, e1);
-      return JwtAuthentication.builder()
-          .success(false)
-          .message(errorMessage)
-          .errorType(ApiErrorType.UNAUTHORIZED)
-          .build();
+      return JwtAuthentication.builder().success(false).message(errorMessage).build();
     }
 
     String subject = claims.getBody().getSubject();
@@ -141,23 +130,18 @@ public class JwtTokenManager {
       log.error(
           "[{0}] Could not find user is associated to token claims [subject = {1}]",
           this.getClass().getSimpleName(), subject);
-      return JwtAuthentication.builder()
-          .success(false)
-          .message("User could not be found")
-          .errorType(ApiErrorType.UNAUTHORIZED)
-          .build();
+      return JwtAuthentication.builder().success(false).message("User could not be found").build();
     }
     UserEntity userEntity = userEntityOpt.get();
     String fingerprintHash = computeFingerPrintHash(fingerprintFromCookie);
     String fingerprint = (String) claims.getBody().get(USER_FINGERPRINT_CLAIMS_KEY);
     if (fingerprintHash.equals(fingerprint) == Boolean.FALSE) {
-      String authenticationMessage = MessageFormat.format("[{0}] Fingerprint does not match for user {1}", this.getClass().getCanonicalName(), userEntity.getId());
+      String authenticationMessage =
+          MessageFormat.format(
+              "[{0}] Fingerprint does not match for user {1}",
+              this.getClass().getCanonicalName(), userEntity.getId());
       log.warn(authenticationMessage);
-      return JwtAuthentication.builder()
-          .success(false)
-          .message(authenticationMessage)
-          .errorType(ApiErrorType.UNAUTHORIZED)
-          .build();
+      return JwtAuthentication.builder().success(false).message(authenticationMessage).build();
     }
 
     // step 4: verify access token or refresh token
@@ -170,11 +154,7 @@ public class JwtTokenManager {
     if (tokenMatch == Boolean.FALSE) {
       String authenticationMessage = "Token does not match for user: " + userEntity.getEmail();
       log.warn(authenticationMessage);
-      return JwtAuthentication.builder()
-          .success(false)
-          .message(authenticationMessage)
-          .errorType(ApiErrorType.UNAUTHORIZED)
-          .build();
+      return JwtAuthentication.builder().success(false).message(authenticationMessage).build();
     }
 
     Authentication authentication =

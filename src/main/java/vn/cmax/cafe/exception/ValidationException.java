@@ -9,6 +9,6 @@ public class ValidationException extends CmaxException {
     }
 
     public ValidationException(String errorMessage, Throwable throwable) {
-        super(HttpStatus.BAD_REQUEST, errorMessage, throwable);
+        super(errorMessage, HttpStatus.BAD_REQUEST, throwable);
     }
 }

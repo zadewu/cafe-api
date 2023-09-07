@@ -1,42 +1,23 @@
 package vn.cmax.cafe.api;
 
-import lombok.extern.slf4j.Slf4j;
-import vn.cmax.cafe.api.models.ApiError;
-import vn.cmax.cafe.api.models.Category;
-import vn.cmax.cafe.api.models.CategoryPostRequest;
-import vn.cmax.cafe.api.models.CategoryPutRequest;
-import vn.cmax.cafe.api.models.CategorySearchResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
+import vn.cmax.cafe.api.models.*;
 import vn.cmax.cafe.category.MovieCategoryService;
-
-import javax.validation.constraints.*;
-import javax.validation.Valid;
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import vn.cmax.cafe.exception.ApiErrors;
+import vn.cmax.cafe.exception.CmaxException;
 
 @javax.annotation.Generated(
     value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
@@ -96,8 +77,12 @@ public class CategoryApiController implements CategoryApi {
           Long id) {
     String accept = request.getHeader("Accept");
     if (accept != null && accept.contains("application/json")) {
-      Category category = this.movieCategoryService.findById(id);
-      return new ResponseEntity<>(category, HttpStatus.OK);
+      try {
+        Category category = this.movieCategoryService.findById(id);
+        return new ResponseEntity<>(category, HttpStatus.OK);
+      } catch (CmaxException ex) {
+        return ApiErrors.of(ex);
+      }
     }
     return new ResponseEntity<Category>(HttpStatus.BAD_REQUEST);
   }
@@ -111,10 +96,14 @@ public class CategoryApiController implements CategoryApi {
           @RequestBody
           CategoryPutRequest body) {
     String accept = request.getHeader("Accept");
-      if (accept != null && accept.contains("application/json")) {
-          this.movieCategoryService.updateCategory(id, body);
-          return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    if (accept != null && accept.contains("application/json")) {
+      try {
+        this.movieCategoryService.updateCategory(id, body);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+      } catch (CmaxException e) {
+        return ApiErrors.of(e);
       }
+    }
     return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
   }
 
@@ -124,10 +113,14 @@ public class CategoryApiController implements CategoryApi {
           @RequestBody
           CategoryPostRequest body) {
     String accept = request.getHeader("Accept");
-      if (accept != null && accept.contains("application/json")) {
-          this.movieCategoryService.createNewCategory(body);
-          return new ResponseEntity<>(HttpStatus.CREATED);
+    if (accept != null && accept.contains("application/json")) {
+      try {
+        this.movieCategoryService.createNewCategory(body);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+      } catch (CmaxException e) {
+        return ApiErrors.of(e);
       }
+    }
     return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
   }
 }

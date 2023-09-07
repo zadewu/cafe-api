@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.Authentication;
-import vn.cmax.cafe.exception.ApiErrorType;
 
 @Getter
 @Setter
@@ -15,6 +14,4 @@ public class JwtAuthentication {
     private String message;
 
     private Authentication authentication;
-
-    private ApiErrorType errorType;
 }

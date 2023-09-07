@@ -1,25 +1,25 @@
 package vn.cmax.cafe.api;
 
-import vn.cmax.cafe.auth.AuthenticationService;
-import vn.cmax.cafe.api.models.AuthenticationRequest;
-import vn.cmax.cafe.api.models.AuthenticationResponse;
-import vn.cmax.cafe.api.models.RefreshTokenResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
+import org.springframework.web.bind.annotation.RestController;
+import vn.cmax.cafe.api.models.AuthenticationRequest;
+import vn.cmax.cafe.api.models.AuthenticationResponse;
+import vn.cmax.cafe.api.models.RefreshTokenResponse;
+import vn.cmax.cafe.auth.AuthenticationService;
+import vn.cmax.cafe.exception.ApiErrors;
+import vn.cmax.cafe.exception.CmaxException;
 
 @javax.annotation.Generated(
     value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
@@ -44,7 +44,7 @@ public class AuthApiController implements AuthApi {
     this.authenticationService = authenticationService;
   }
 
-  public ResponseEntity<AuthenticationResponse> authLoginPost(
+  public ResponseEntity authLoginPost(
       @Parameter(in = ParameterIn.DEFAULT, description = "", required = true, schema = @Schema())
           @Valid
           @RequestBody
@@ -55,9 +55,8 @@ public class AuthApiController implements AuthApi {
       try {
         return new ResponseEntity<AuthenticationResponse>(
             this.authenticationService.login(body, response), HttpStatus.OK);
-      } catch (NoSuchAlgorithmException e) {
-        log.error("Couldn't process login", e);
-        return new ResponseEntity<AuthenticationResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
+      } catch (CmaxException e) {
+        return ApiErrors.of(e);
       }
     }
 

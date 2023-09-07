@@ -25,7 +25,7 @@ public class PromotionService {
   private PromotionRepository promotionRepository;
 
   @Transactional
-  public Promotion createNewPromotion(PromotionPostRequest request) {
+  public Promotion createNewPromotion(PromotionPostRequest request) throws CmaxException {
     if (StringUtils.isBlank(request.getTitle())) {
       throw new ValidationException("Promotion title cannot be blank");
     }
@@ -40,7 +40,7 @@ public class PromotionService {
   }
 
   @Transactional
-  public void updatePromotion(Long id, PromotionPutRequest request) {
+  public void updatePromotion(Long id, PromotionPutRequest request) throws CmaxException {
     if (Objects.isNull(id)) {
       throw new ValidationException("Promotion ID is required for updating content");
     }
@@ -54,7 +54,7 @@ public class PromotionService {
     this.promotionRepository.save(saved);
   }
 
-  public Promotion findPromotionWith(Long id) {
+  public Promotion findPromotionWith(Long id) throws CmaxException {
     if (Objects.isNull(id)) {
       throw new ValidationException("Promotion ID is required for updating content");
     }

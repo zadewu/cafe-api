@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @Setter
-public class CmaxException extends RuntimeException {
+public class CmaxException extends Exception {
     private HttpStatus status;
 
     public CmaxException(final String errorMessage) {
@@ -23,7 +23,7 @@ public class CmaxException extends RuntimeException {
         this.status = status;
     }
 
-    public CmaxException(final HttpStatus status, final String errorMessage, final Throwable throwable) {
+    public CmaxException(final String errorMessage, final HttpStatus status, final Throwable throwable) {
         this(errorMessage, throwable);
         this.status = status;
     }

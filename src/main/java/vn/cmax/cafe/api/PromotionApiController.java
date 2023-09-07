@@ -1,42 +1,26 @@
 package vn.cmax.cafe.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Schema;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 import lombok.extern.slf4j.Slf4j;
-import vn.cmax.cafe.api.models.ApiError;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import vn.cmax.cafe.api.models.Promotion;
 import vn.cmax.cafe.api.models.PromotionPostRequest;
 import vn.cmax.cafe.api.models.PromotionPutRequest;
 import vn.cmax.cafe.api.models.PromotionSearchResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
+import vn.cmax.cafe.exception.ApiErrors;
+import vn.cmax.cafe.exception.CmaxException;
 import vn.cmax.cafe.promotion.PromotionService;
-
-import javax.validation.constraints.*;
-import javax.validation.Valid;
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 @javax.annotation.Generated(
     value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
@@ -93,7 +77,13 @@ public class PromotionApiController implements PromotionApi {
           Long id) {
     String accept = request.getHeader("Accept");
     if (accept != null && accept.contains("application/json")) {
-      Promotion promotion = this.promotionService.findPromotionWith(id);
+
+      Promotion promotion = null;
+      try {
+        promotion = this.promotionService.findPromotionWith(id);
+      } catch (CmaxException e) {
+        return ApiErrors.of(e);
+      }
       return new ResponseEntity<Promotion>(promotion, HttpStatus.OK);
     }
     return new ResponseEntity<Promotion>(HttpStatus.BAD_REQUEST);
@@ -109,8 +99,12 @@ public class PromotionApiController implements PromotionApi {
           PromotionPutRequest body) {
     String accept = request.getHeader("Accept");
     if (accept != null && accept.contains("application/json")) {
-      this.promotionService.updatePromotion(id, body);
-      return new ResponseEntity<Void>(HttpStatus.ACCEPTED);
+      try {
+        this.promotionService.updatePromotion(id, body);
+        return new ResponseEntity<Void>(HttpStatus.ACCEPTED);
+      } catch (CmaxException e) {
+        return ApiErrors.of(e);
+      }
     }
     return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
   }
@@ -122,8 +116,12 @@ public class PromotionApiController implements PromotionApi {
           PromotionPostRequest body) {
     String accept = request.getHeader("Accept");
     if (accept != null && accept.contains("application/json")) {
-      this.promotionService.createNewPromotion(body);
-      return new ResponseEntity<Void>(HttpStatus.CREATED);
+      try {
+        this.promotionService.createNewPromotion(body);
+        return new ResponseEntity<Void>(HttpStatus.CREATED);
+      } catch (CmaxException e) {
+        return ApiErrors.of(e);
+      }
     }
     return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
   }

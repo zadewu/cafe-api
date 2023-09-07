@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
 
   @Transactional
   @Override
-  public UserEntity updateUserPassword(String username, String newPassword) {
+  public UserEntity updateUserPassword(String username, String newPassword) throws CmaxException {
     UserEntity userEntity = getUser(username);
     userEntity.setPassword(newPassword);
     this.userRepository.save(userEntity);
@@ -37,9 +37,11 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public UserEntity getUser(String username) {
+  public UserEntity getUser(String username) throws CmaxException {
     Optional<UserEntity> userEntityOptional = this.userRepository.findByUsername(username);
-    return userEntityOptional.stream().findFirst().orElseThrow();
+    return userEntityOptional.stream()
+        .findFirst()
+        .orElseThrow(() -> new ValidationException("Cannot find user with username " + username));
   }
 
   @Override
@@ -50,12 +52,13 @@ public class UserServiceImpl implements UserService {
 
   @Transactional
   @Override
-  public UserEntity signUp(UserRequest userRequest) {
+  public UserEntity signUp(UserRequest userRequest) throws CmaxException {
     Optional<UserEntity> userEntityOptional =
         this.userRepository.findByUsernameOrEmail(
             userRequest.getUsername(), userRequest.getEmail());
     if (userEntityOptional.isPresent()) {
-      throw new ValidationException("User with username " + userRequest.getUsername() + " already exist");
+      throw new ValidationException(
+          "User with username " + userRequest.getUsername() + " already exist");
     }
 
     User user = UserRequests.toUser(userRequest);
@@ -66,7 +69,7 @@ public class UserServiceImpl implements UserService {
 
   @Transactional
   @Override
-  public UserEntity updateUser(Long id, UserRequest userRequest) {
+  public UserEntity updateUser(Long id, UserRequest userRequest) throws CmaxException {
     RequestValidators.validateUserRequest(userRequest);
     UserEntity updatedUser = getUser(id);
     if (StringUtils.isNotBlank(userRequest.getPassword())) {

@@ -3,6 +3,7 @@ package vn.cmax.cafe.movie;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
+import javax.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,8 +21,6 @@ import vn.cmax.cafe.exception.CmaxException;
 import vn.cmax.cafe.exception.ValidationException;
 import vn.cmax.cafe.mapper.MovieMapper;
 
-import javax.transaction.Transactional;
-
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class MovieService {
@@ -31,7 +30,7 @@ public class MovieService {
   public MovieSearchResponse findAllMovies(int page, int pageSize, Long categoryId) {
     Pageable pageable = PageRequest.of(page, pageSize);
     MovieSearchResponse response = new MovieSearchResponse().records(new ArrayList<>());
-    Page<MovieEntity> movieEntities = null;
+    Page<MovieEntity> movieEntities;
     if (categoryId != null) {
       movieEntities = this.movieRepository.findAllByCategoryId(categoryId, pageable);
     } else {
@@ -47,7 +46,7 @@ public class MovieService {
     return response;
   }
 
-  public Movie findMovieById(Long movieId) {
+  public Movie findMovieById(Long movieId)throws CmaxException {
     Optional<MovieEntity> movieEntityOptional = this.movieRepository.findById(movieId);
     if (movieEntityOptional.isEmpty()) {
       throw new CmaxException("No movie with id [" + movieId + "] founded", HttpStatus.NOT_FOUND);
@@ -56,7 +55,7 @@ public class MovieService {
   }
 
   @Transactional
-  public void updateMovie(Long movieId, MoviePutRequest moviePutRequest) {
+  public void updateMovie(Long movieId, MoviePutRequest moviePutRequest)throws ValidationException {
     Optional<MovieEntity> movieEntityOptional = this.movieRepository.findById(movieId);
     if (movieEntityOptional.isEmpty()) {
       throw new ValidationException("No movie with Id " + movieId);
@@ -72,7 +71,7 @@ public class MovieService {
   }
 
   @Transactional
-  public Movie createMovie(MoviePostRequest request) {
+  public Movie createMovie(MoviePostRequest request)throws ValidationException {
     try {
       Objects.requireNonNull(request.getName());
       Objects.requireNonNull(request.getDuration());

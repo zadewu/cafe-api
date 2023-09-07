@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 import vn.cmax.cafe.configuration.model.CmaxConfigurationProperties;
+import vn.cmax.cafe.exception.CmaxException;
 import vn.cmax.cafe.exception.ValidationException;
 
 @Service
@@ -27,7 +28,7 @@ import vn.cmax.cafe.exception.ValidationException;
 public class FileService {
   private CmaxConfigurationProperties configurationProperties;
 
-  public String uploadFile(MultipartFile multipartFile) {
+  public String uploadFile(MultipartFile multipartFile) throws CmaxException {
     if (multipartFile.isEmpty()) {
       throw new ValidationException("File content is empty");
     }
