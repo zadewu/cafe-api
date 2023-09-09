@@ -32,15 +32,18 @@ public class AuthApiController implements AuthApi {
   private final ObjectMapper objectMapper;
 
   private final HttpServletRequest request;
+  private final HttpServletResponse response;
   private final AuthenticationService authenticationService;
 
   @org.springframework.beans.factory.annotation.Autowired
   public AuthApiController(
       ObjectMapper objectMapper,
       HttpServletRequest request,
+      HttpServletResponse response,
       AuthenticationService authenticationService) {
     this.objectMapper = objectMapper;
     this.request = request;
+    this.response = response;
     this.authenticationService = authenticationService;
   }
 
@@ -48,8 +51,7 @@ public class AuthApiController implements AuthApi {
       @Parameter(in = ParameterIn.DEFAULT, description = "", required = true, schema = @Schema())
           @Valid
           @RequestBody
-          AuthenticationRequest body,
-      HttpServletResponse response) {
+          AuthenticationRequest body) {
     String accept = request.getHeader("Accept");
     if (accept != null && accept.contains("application/json")) {
       try {
@@ -65,23 +67,25 @@ public class AuthApiController implements AuthApi {
 
   public ResponseEntity<Void> authLogoutPost() {
     String accept = request.getHeader("Accept");
-    return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
+    try {
+      this.authenticationService.logout(request, response);
+      return new ResponseEntity(HttpStatus.NO_CONTENT);
+    } catch (CmaxException ex) {
+      return ApiErrors.of(ex);
+    }
   }
 
   public ResponseEntity<RefreshTokenResponse> authRefreshPost() {
     String accept = request.getHeader("Accept");
     if (accept != null && accept.contains("application/json")) {
       try {
-        return new ResponseEntity<RefreshTokenResponse>(
-            objectMapper.readValue(
-                "{\n  \"accessToken\" : \"accessToken\"\n}", RefreshTokenResponse.class),
-            HttpStatus.NOT_IMPLEMENTED);
-      } catch (IOException e) {
-        log.error("Couldn't serialize response for content type application/json", e);
-        return new ResponseEntity<RefreshTokenResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
+        RefreshTokenResponse tokenResponse =
+            this.authenticationService.refreshToken(request, response);
+        return new ResponseEntity<>(tokenResponse, HttpStatus.OK);
+      } catch (CmaxException e) {
+        return ApiErrors.of(e);
       }
     }
-
-    return new ResponseEntity<RefreshTokenResponse>(HttpStatus.NOT_IMPLEMENTED);
+    return new ResponseEntity(HttpStatus.BAD_REQUEST);
   }
 }

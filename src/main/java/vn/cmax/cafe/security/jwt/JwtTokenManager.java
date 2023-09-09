@@ -9,8 +9,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import vn.cmax.cafe.configuration.model.SecurityProperties;
+import vn.cmax.cafe.exception.ApiErrorMessages;
 import vn.cmax.cafe.exception.CmaxException;
 import vn.cmax.cafe.exception.TechnicalException;
+import vn.cmax.cafe.exception.UnauthorizedException;
 import vn.cmax.cafe.security.jwt.model.Token;
 import vn.cmax.cafe.user.UserEntity;
 import vn.cmax.cafe.user.UserRepository;
@@ -64,7 +66,7 @@ public class JwtTokenManager {
       fingerPrintHash = computeFingerPrintHash(fingerPrint);
     } catch (NoSuchAlgorithmException ex) {
       log.error("computeFingerPrintHash has exception", ex);
-      throw new TechnicalException();
+      throw new UnauthorizedException("Cannot grant token");
     }
     String subject = userEntity.getId().toString();
     Claims claims = Jwts.claims();
@@ -97,10 +99,8 @@ public class JwtTokenManager {
     // step 1: check if finger print is in cookie
     String fingerprintFromCookie = getFingerprintFromCookie(request, jwtTokenType);
     if (fingerprintFromCookie == null) {
-      return JwtAuthentication.builder()
-          .success(false)
-          .message("Fingerprint wasn't set into cookie request header")
-          .build();
+      log.warn("Fingerprint wasn't set into cookie request header");
+      return JwtAuthentication.builder().success(false).message("Invalid token").build();
     }
 
     // step 2: parse claim, if cannot parse meaning token is invalid or expired
@@ -139,7 +139,7 @@ public class JwtTokenManager {
       String authenticationMessage =
           MessageFormat.format(
               "[{0}] Fingerprint does not match for user {1}",
-              this.getClass().getCanonicalName(), userEntity.getId());
+              this.getClass().getCanonicalName(), userEntity.getUsername());
       log.warn(authenticationMessage);
       return JwtAuthentication.builder().success(false).message(authenticationMessage).build();
     }

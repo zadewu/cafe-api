@@ -69,7 +69,7 @@ public interface AuthApi {
       @Parameter(in = ParameterIn.DEFAULT, description = "", required = true, schema = @Schema())
           @Valid
           @RequestBody
-          AuthenticationRequest body, HttpServletResponse response);
+          AuthenticationRequest body);
 
   @Operation(
       summary = "Logout with accessToken",
