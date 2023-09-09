@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -57,6 +58,7 @@ public class UsersApiController implements UsersApi {
     this.authenticationService = authenticationService;
   }
 
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<UserSearchResponse> usersGet(
       @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema())
           @Valid
@@ -100,6 +102,7 @@ public class UsersApiController implements UsersApi {
     return new ResponseEntity<UserSearchResponse>(HttpStatus.NOT_IMPLEMENTED);
   }
 
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity usersIdPut(
       @Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
           @PathVariable("id")

@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,6 +43,7 @@ public class FileApiController implements FileApi {
     this.configurationProperties = configurationProperties;
   }
 
+  @PreAuthorize("hasRole('ADMIN') or hasRole('AUDITOR')")
   public ResponseEntity<String> fileUploadPost(
       @Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema())
           @RequestParam(value = "file", required = false)

@@ -12,6 +12,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import vn.cmax.cafe.security.jwt.JwtSecurityConfigurer;
 import vn.cmax.cafe.security.jwt.JwtTokenManager;
 import vn.cmax.cafe.user.UserService;
@@ -22,6 +23,8 @@ import vn.cmax.cafe.user.UserService;
 public class SecurityConfig {
 
   private final JwtTokenManager jwtTokenManager;
+  private final CustomAccessDeniedHandler accessDeniedHandler;
+  private final CustomAuthenticationFailedHandler authenticationFailedHandler;
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -40,7 +43,11 @@ public class SecurityConfig {
         .anyRequest()
         .authenticated()
         .and()
-        .apply(new JwtSecurityConfigurer(jwtTokenManager));
+        .apply(new JwtSecurityConfigurer(jwtTokenManager))
+        .and()
+        .exceptionHandling()
+        .accessDeniedHandler(accessDeniedHandler)
+        .authenticationEntryPoint(authenticationFailedHandler);
     http.cors();
     return http.build();
   }

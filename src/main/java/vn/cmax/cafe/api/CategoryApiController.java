@@ -10,6 +10,7 @@ import javax.validation.constraints.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -87,6 +88,7 @@ public class CategoryApiController implements CategoryApi {
     return new ResponseEntity<Category>(HttpStatus.BAD_REQUEST);
   }
 
+  @PreAuthorize("hasRole('ADMIN') or hasRole('AUDITOR')")
   public ResponseEntity<Void> categoryIdPut(
       @Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
           @PathVariable("id")
@@ -107,6 +109,7 @@ public class CategoryApiController implements CategoryApi {
     return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
   }
 
+  @PreAuthorize("hasRole('ADMIN') or hasRole('AUDITOR')")
   public ResponseEntity<Void> categoryPost(
       @Parameter(in = ParameterIn.DEFAULT, description = "", required = true, schema = @Schema())
           @Valid
