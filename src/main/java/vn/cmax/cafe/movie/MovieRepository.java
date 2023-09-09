@@ -12,7 +12,7 @@ public interface MovieRepository extends JpaRepository<MovieEntity, Long> {
 
     List<MovieEntity> findByCategoryId(Long id);
 
-    Page<MovieEntity> findAll(Pageable pageable);
+    Page<MovieEntity> findAllByOrderByCreatedDateDesc(Pageable pageable);
 
-    Page<MovieEntity> findAllByCategoryId(Long id, Pageable pageable);
+    Page<MovieEntity> findAllByCategoryIdOrderByCreatedDateDesc(Long id, Pageable pageable);
 }

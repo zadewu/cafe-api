@@ -32,9 +32,10 @@ public class MovieService {
     MovieSearchResponse response = new MovieSearchResponse().records(new ArrayList<>());
     Page<MovieEntity> movieEntities;
     if (categoryId != null) {
-      movieEntities = this.movieRepository.findAllByCategoryId(categoryId, pageable);
+      movieEntities =
+          this.movieRepository.findAllByCategoryIdOrderByCreatedDateDesc(categoryId, pageable);
     } else {
-      movieEntities = this.movieRepository.findAll(pageable);
+      movieEntities = this.movieRepository.findAllByOrderByCreatedDateDesc(pageable);
     }
     Page<Movie> movies = movieEntities.map(item -> MovieMapper.INSTANCE.fromEntity(item));
     response
@@ -46,7 +47,7 @@ public class MovieService {
     return response;
   }
 
-  public Movie findMovieById(Long movieId)throws CmaxException {
+  public Movie findMovieById(Long movieId) throws CmaxException {
     Optional<MovieEntity> movieEntityOptional = this.movieRepository.findById(movieId);
     if (movieEntityOptional.isEmpty()) {
       throw new CmaxException("No movie with id [" + movieId + "] founded", HttpStatus.NOT_FOUND);
@@ -55,7 +56,8 @@ public class MovieService {
   }
 
   @Transactional
-  public void updateMovie(Long movieId, MoviePutRequest moviePutRequest)throws ValidationException {
+  public void updateMovie(Long movieId, MoviePutRequest moviePutRequest)
+      throws ValidationException {
     Optional<MovieEntity> movieEntityOptional = this.movieRepository.findById(movieId);
     if (movieEntityOptional.isEmpty()) {
       throw new ValidationException("No movie with Id " + movieId);
@@ -71,7 +73,7 @@ public class MovieService {
   }
 
   @Transactional
-  public Movie createMovie(MoviePostRequest request)throws ValidationException {
+  public Movie createMovie(MoviePostRequest request) throws ValidationException {
     try {
       Objects.requireNonNull(request.getName());
       Objects.requireNonNull(request.getDuration());

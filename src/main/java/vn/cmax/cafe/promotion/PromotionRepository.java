@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 
 public interface PromotionRepository extends JpaRepository<PromotionEntity, Long> {
-    Page<PromotionEntity> findAll(Pageable pageable);
+    Page<PromotionEntity> findAllByOrderByCreatedDateDesc(Pageable pageable);
 }

@@ -69,13 +69,16 @@ public class PromotionService {
   public PromotionSearchResponse findAllPromotion(int page, int pageSize) {
     Pageable pageable = PageRequest.of(page, pageSize);
     PromotionSearchResponse response = new PromotionSearchResponse().records(new ArrayList<>());
-    Page<PromotionEntity> promotionEntityPage = this.promotionRepository.findAll(pageable);
-    Page<Promotion> promotions = promotionEntityPage.map(item -> PromotionMapper.INSTANCE.fromEntity(item));
-    response.records(promotions.getContent())
-            .pageSize(promotions.getSize())
-            .totalPage(promotions.getTotalPages())
-            .totalCount(promotions.getTotalElements())
-            .currentPage(promotions.getNumber());
+    Page<PromotionEntity> promotionEntityPage =
+        this.promotionRepository.findAllByOrderByCreatedDateDesc(pageable);
+    Page<Promotion> promotions =
+        promotionEntityPage.map(item -> PromotionMapper.INSTANCE.fromEntity(item));
+    response
+        .records(promotions.getContent())
+        .pageSize(promotions.getSize())
+        .totalPage(promotions.getTotalPages())
+        .totalCount(promotions.getTotalElements())
+        .currentPage(promotions.getNumber());
     return response;
   }
 }
