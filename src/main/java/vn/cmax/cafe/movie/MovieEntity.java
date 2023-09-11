@@ -29,7 +29,7 @@ public class MovieEntity extends DomainAudit implements Serializable {
     @Column(name = "duration")
     private Integer duration;
 
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "trailer_link")

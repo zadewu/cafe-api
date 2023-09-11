@@ -25,6 +25,6 @@ public class PromotionEntity extends DomainAudit implements Serializable {
     @Column(name = "title")
     private String title;
 
-    @Column(name = "content")
+    @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 }
