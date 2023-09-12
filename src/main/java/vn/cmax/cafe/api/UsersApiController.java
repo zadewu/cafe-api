@@ -111,8 +111,6 @@ public class UsersApiController implements UsersApi {
           @Valid
           @RequestBody
           UserRequest body) {
-    String accept = request.getHeader("Accept");
-
     try {
       UserEntity userEntity = this.authenticationService.getCurrentAuthenticatedUser();
       if (userEntity == null) {
@@ -154,8 +152,6 @@ public class UsersApiController implements UsersApi {
           @Valid
           @RequestBody
           UserRequest body) {
-    String accept = request.getHeader("Accept");
-
     try {
       RequestValidators.validateUserRequest(body);
       boolean match =

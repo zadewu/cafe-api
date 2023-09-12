@@ -48,7 +48,6 @@ public class FileApiController implements FileApi {
       @Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema())
           @RequestParam(value = "file", required = false)
           MultipartFile file) {
-    String accept = request.getHeader("Accept");
     String fileName = null;
     try {
       fileName = this.fileService.uploadFile(file);

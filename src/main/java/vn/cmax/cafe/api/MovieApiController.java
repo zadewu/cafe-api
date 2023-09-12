@@ -69,12 +69,8 @@ public class MovieApiController implements MovieApi {
           @Valid
           @RequestParam(value = "category", required = false)
           Long category) {
-    String accept = request.getHeader("Accept");
-    if (accept != null && accept.contains("application/json")) {
-      MovieSearchResponse response = this.movieService.findAllMovies(page, pageSize, category);
-      return new ResponseEntity<MovieSearchResponse>(response, HttpStatus.OK);
-    }
-    return new ResponseEntity<MovieSearchResponse>(HttpStatus.BAD_REQUEST);
+    MovieSearchResponse response = this.movieService.findAllMovies(page, pageSize, category);
+    return new ResponseEntity<MovieSearchResponse>(response, HttpStatus.OK);
   }
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('AUDITOR')")
@@ -92,16 +88,12 @@ public class MovieApiController implements MovieApi {
       @Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
           @PathVariable("id")
           Long id) {
-    String accept = request.getHeader("Accept");
-    if (accept != null && accept.contains("application/json")) {
-      try {
-        Movie movie = this.movieService.findMovieById(id);
-        return new ResponseEntity<Movie>(movie, HttpStatus.OK);
-      } catch (CmaxException ex) {
-        return ApiErrors.of(ex);
-      }
+    try {
+      Movie movie = this.movieService.findMovieById(id);
+      return new ResponseEntity<Movie>(movie, HttpStatus.OK);
+    } catch (CmaxException ex) {
+      return ApiErrors.of(ex);
     }
-    return new ResponseEntity<Movie>(HttpStatus.BAD_REQUEST);
   }
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('AUDITOR')")
@@ -113,16 +105,12 @@ public class MovieApiController implements MovieApi {
           @Valid
           @RequestBody
           MoviePutRequest body) {
-    String accept = request.getHeader("Accept");
-    if (accept != null && accept.contains("application/json")) {
-      try {
-        this.movieService.updateMovie(id, body);
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
-      } catch (CmaxException ex) {
-        return ApiErrors.of(ex);
-      }
+    try {
+      this.movieService.updateMovie(id, body);
+      return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    } catch (CmaxException ex) {
+      return ApiErrors.of(ex);
     }
-    return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
   }
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('AUDITOR')")
@@ -131,15 +119,11 @@ public class MovieApiController implements MovieApi {
           @Valid
           @RequestBody
           MoviePostRequest body) {
-    String accept = request.getHeader("Accept");
-    if (accept != null && accept.contains("application/json")) {
-      try {
-        this.movieService.createMovie(body);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-      } catch (CmaxException e) {
-        return ApiErrors.of(e);
-      }
+    try {
+      this.movieService.createMovie(body);
+      return new ResponseEntity<>(HttpStatus.CREATED);
+    } catch (CmaxException e) {
+      return ApiErrors.of(e);
     }
-    return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
   }
 }

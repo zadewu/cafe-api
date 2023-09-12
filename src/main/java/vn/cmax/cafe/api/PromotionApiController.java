@@ -64,12 +64,8 @@ public class PromotionApiController implements PromotionApi {
           @Valid
           @RequestParam(value = "pageSize", required = false)
           Integer pageSize) {
-    String accept = request.getHeader("Accept");
-    if (accept != null && accept.contains("application/json")) {
-      PromotionSearchResponse response = this.promotionService.findAllPromotion(page, pageSize);
-      return new ResponseEntity<PromotionSearchResponse>(response, HttpStatus.OK);
-    }
-    return new ResponseEntity<PromotionSearchResponse>(HttpStatus.BAD_REQUEST);
+    PromotionSearchResponse response = this.promotionService.findAllPromotion(page, pageSize);
+    return new ResponseEntity<PromotionSearchResponse>(response, HttpStatus.OK);
   }
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('AUDITOR')")
@@ -87,18 +83,14 @@ public class PromotionApiController implements PromotionApi {
       @Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
           @PathVariable("id")
           Long id) {
-    String accept = request.getHeader("Accept");
-    if (accept != null && accept.contains("application/json")) {
 
-      Promotion promotion = null;
-      try {
-        promotion = this.promotionService.findPromotionWith(id);
-      } catch (CmaxException e) {
-        return ApiErrors.of(e);
-      }
-      return new ResponseEntity<Promotion>(promotion, HttpStatus.OK);
+    Promotion promotion = null;
+    try {
+      promotion = this.promotionService.findPromotionWith(id);
+    } catch (CmaxException e) {
+      return ApiErrors.of(e);
     }
-    return new ResponseEntity<Promotion>(HttpStatus.BAD_REQUEST);
+    return new ResponseEntity<Promotion>(promotion, HttpStatus.OK);
   }
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('AUDITOR')")
@@ -110,16 +102,12 @@ public class PromotionApiController implements PromotionApi {
           @Valid
           @RequestBody
           PromotionPutRequest body) {
-    String accept = request.getHeader("Accept");
-    if (accept != null && accept.contains("application/json")) {
-      try {
-        this.promotionService.updatePromotion(id, body);
-        return new ResponseEntity<Void>(HttpStatus.ACCEPTED);
-      } catch (CmaxException e) {
-        return ApiErrors.of(e);
-      }
+    try {
+      this.promotionService.updatePromotion(id, body);
+      return new ResponseEntity<Void>(HttpStatus.ACCEPTED);
+    } catch (CmaxException e) {
+      return ApiErrors.of(e);
     }
-    return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
   }
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('AUDITOR')")
@@ -128,15 +116,11 @@ public class PromotionApiController implements PromotionApi {
           @Valid
           @RequestBody
           PromotionPostRequest body) {
-    String accept = request.getHeader("Accept");
-    if (accept != null && accept.contains("application/json")) {
-      try {
-        this.promotionService.createNewPromotion(body);
-        return new ResponseEntity<Void>(HttpStatus.CREATED);
-      } catch (CmaxException e) {
-        return ApiErrors.of(e);
-      }
+    try {
+      this.promotionService.createNewPromotion(body);
+      return new ResponseEntity<Void>(HttpStatus.CREATED);
+    } catch (CmaxException e) {
+      return ApiErrors.of(e);
     }
-    return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
   }
 }

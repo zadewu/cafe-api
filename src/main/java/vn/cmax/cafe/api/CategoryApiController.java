@@ -87,16 +87,12 @@ public class CategoryApiController implements CategoryApi {
       @Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
           @PathVariable("id")
           Long id) {
-    String accept = request.getHeader("Accept");
-    if (accept != null && accept.contains("application/json")) {
-      try {
-        Category category = this.movieCategoryService.findById(id);
-        return new ResponseEntity<>(category, HttpStatus.OK);
-      } catch (CmaxException ex) {
-        return ApiErrors.of(ex);
-      }
+    try {
+      Category category = this.movieCategoryService.findById(id);
+      return new ResponseEntity<>(category, HttpStatus.OK);
+    } catch (CmaxException ex) {
+      return ApiErrors.of(ex);
     }
-    return new ResponseEntity<Category>(HttpStatus.BAD_REQUEST);
   }
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('AUDITOR')")
@@ -108,16 +104,12 @@ public class CategoryApiController implements CategoryApi {
           @Valid
           @RequestBody
           CategoryPutRequest body) {
-    String accept = request.getHeader("Accept");
-    if (accept != null && accept.contains("application/json")) {
-      try {
-        this.movieCategoryService.updateCategory(id, body);
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
-      } catch (CmaxException e) {
-        return ApiErrors.of(e);
-      }
+    try {
+      this.movieCategoryService.updateCategory(id, body);
+      return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    } catch (CmaxException e) {
+      return ApiErrors.of(e);
     }
-    return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
   }
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('AUDITOR')")
@@ -126,15 +118,11 @@ public class CategoryApiController implements CategoryApi {
           @Valid
           @RequestBody
           CategoryPostRequest body) {
-    String accept = request.getHeader("Accept");
-    if (accept != null && accept.contains("application/json")) {
-      try {
-        this.movieCategoryService.createNewCategory(body);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-      } catch (CmaxException e) {
-        return ApiErrors.of(e);
-      }
+    try {
+      this.movieCategoryService.createNewCategory(body);
+      return new ResponseEntity<>(HttpStatus.CREATED);
+    } catch (CmaxException e) {
+      return ApiErrors.of(e);
     }
-    return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
   }
 }

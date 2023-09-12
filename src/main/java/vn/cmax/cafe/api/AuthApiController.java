@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -52,21 +51,15 @@ public class AuthApiController implements AuthApi {
           @Valid
           @RequestBody
           AuthenticationRequest body) {
-    String accept = request.getHeader("Accept");
-    if (accept != null && accept.contains("application/json")) {
-      try {
-        return new ResponseEntity<AuthenticationResponse>(
-            this.authenticationService.login(body, response), HttpStatus.OK);
-      } catch (CmaxException e) {
-        return ApiErrors.of(e);
-      }
+    try {
+      return new ResponseEntity<AuthenticationResponse>(
+          this.authenticationService.login(body, response), HttpStatus.OK);
+    } catch (CmaxException e) {
+      return ApiErrors.of(e);
     }
-
-    return new ResponseEntity<AuthenticationResponse>(HttpStatus.NOT_IMPLEMENTED);
   }
 
   public ResponseEntity<Void> authLogoutPost() {
-    String accept = request.getHeader("Accept");
     try {
       this.authenticationService.logout(request, response);
       return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -76,16 +69,12 @@ public class AuthApiController implements AuthApi {
   }
 
   public ResponseEntity<RefreshTokenResponse> authRefreshPost() {
-    String accept = request.getHeader("Accept");
-    if (accept != null && accept.contains("application/json")) {
-      try {
-        RefreshTokenResponse tokenResponse =
-            this.authenticationService.refreshToken(request, response);
-        return new ResponseEntity<>(tokenResponse, HttpStatus.OK);
-      } catch (CmaxException e) {
-        return ApiErrors.of(e);
-      }
+    try {
+      RefreshTokenResponse tokenResponse =
+          this.authenticationService.refreshToken(request, response);
+      return new ResponseEntity<>(tokenResponse, HttpStatus.OK);
+    } catch (CmaxException e) {
+      return ApiErrors.of(e);
     }
-    return new ResponseEntity(HttpStatus.BAD_REQUEST);
   }
 }
