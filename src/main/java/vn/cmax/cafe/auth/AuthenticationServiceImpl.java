@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -150,12 +152,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         this.securityProperties.getCookiePath() == null
             ? DEFAULT_COOKIE_PATH
             : this.securityProperties.getCookiePath();
+    String cookieSamesite =
+        this.securityProperties.getCookieSamesite() == null
+            ? "Lax"
+            : this.securityProperties.getCookieSamesite();
     boolean cookieSecure = this.securityProperties.isCookieSecure();
-
-    Cookie cookie = new Cookie(tokenType.toString(), fingerprint);
-    cookie.setHttpOnly(true);
-    cookie.setSecure(cookieSecure);
-    cookie.setPath(cookiePath);
-    response.addCookie(cookie);
+    final ResponseCookie responseCookie =
+        ResponseCookie.from(tokenType.toString(), fingerprint)
+            .secure(cookieSecure)
+            .path(cookiePath)
+            .httpOnly(true)
+            .sameSite(cookieSamesite)
+            .build();
+    response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
   }
 }

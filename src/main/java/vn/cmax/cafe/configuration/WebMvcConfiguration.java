@@ -5,8 +5,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-@Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+//@Configuration
+//@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebMvcConfiguration implements WebMvcConfigurer {
   @Override
   public void addCorsMappings(CorsRegistry registry) {

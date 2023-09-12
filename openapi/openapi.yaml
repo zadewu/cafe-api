@@ -241,6 +241,22 @@ paths:
           $ref: '#/components/responses/ServerError'
       security:
         - BearerAuth: [ ]
+    delete:
+      description: Delete category
+      tags:
+        - category
+      summary: Delete category
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '204':
+          description: 'No content'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+          '500':
+            $ref: '#/components/responses/ServerError'
+          security:
+            - BearerAuth: [ ]
   /movie:
     get:
       description: Retrieve all movies
@@ -328,6 +344,22 @@ paths:
           $ref: '#/components/responses/ServerError'
       security:
         - BearerAuth: [ ]
+    delete:
+      description: Delete movie
+      tags:
+        - movie
+      summary: Delete movie
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '204':
+          description: 'No content'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+          '500':
+            $ref: '#/components/responses/ServerError'
+          security:
+            - BearerAuth: [ ]
   /promotion:
     get:
       description: Search all promotions
@@ -414,6 +446,22 @@ paths:
           $ref: '#/components/responses/ServerError'
       security:
         - BearerAuth: [ ]
+    delete:
+      description: Delete promotion
+      tags:
+        - promotion
+      summary: Delete promotion
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '204':
+          description: 'No content'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+          '500':
+            $ref: '#/components/responses/ServerError'
+          security:
+            - BearerAuth: [ ]
   /file/upload:
     post:
       description: Upload file

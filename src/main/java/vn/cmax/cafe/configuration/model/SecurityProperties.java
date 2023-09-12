@@ -13,4 +13,5 @@ public class SecurityProperties {
   private JwtProperties jwt;
   private String cookiePath;
   private boolean cookieSecure;
+  private String cookieSamesite;
 }
