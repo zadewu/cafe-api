@@ -105,5 +105,6 @@ public class MovieCategoryService {
               item.setCategory(otherCategory);
               this.movieRepository.save(item);
             });
+    this.categoryRepository.delete(founded);
   }
 }
