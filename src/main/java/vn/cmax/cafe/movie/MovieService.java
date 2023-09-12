@@ -101,4 +101,14 @@ public class MovieService {
     MovieEntity saved = this.movieRepository.save(movieEntity);
     return MovieMapper.INSTANCE.fromEntity(saved);
   }
+
+  @Transactional
+  public void deleteMovie(Long id) throws CmaxException{
+    Optional<MovieEntity> movieOpt = this.movieRepository.findById(id);
+    if (movieOpt.isEmpty()) {
+      throw new ValidationException("No movie with Id " + id);
+    }
+    MovieEntity movieEntity = movieOpt.get();
+    this.movieRepository.delete(movieEntity);
+  }
 }

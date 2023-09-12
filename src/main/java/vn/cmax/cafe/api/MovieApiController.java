@@ -77,6 +77,17 @@ public class MovieApiController implements MovieApi {
     return new ResponseEntity<MovieSearchResponse>(HttpStatus.BAD_REQUEST);
   }
 
+  @PreAuthorize("hasRole('ADMIN') or hasRole('AUDITOR')")
+  @Override
+  public ResponseEntity<Void> movieIdDelete(Long id) {
+    try {
+      this.movieService.deleteMovie(id);
+      return new ResponseEntity(HttpStatus.NO_CONTENT);
+    } catch (CmaxException e) {
+      return ApiErrors.of(e);
+    }
+  }
+
   public ResponseEntity<Movie> movieIdGet(
       @Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
           @PathVariable("id")

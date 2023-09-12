@@ -81,4 +81,14 @@ public class PromotionService {
         .currentPage(promotions.getNumber());
     return response;
   }
+
+  @Transactional
+  public void deletePromotion(Long id) throws CmaxException {
+    Optional<PromotionEntity> promotionEntityOptional = this.promotionRepository.findById(id);
+    if (promotionEntityOptional.isEmpty()) {
+      throw new CmaxException("No promotion found with id " + id, HttpStatus.NOT_FOUND);
+    }
+    PromotionEntity promotionEntity = promotionEntityOptional.get();
+    this.promotionRepository.delete(promotionEntity);
+  }
 }

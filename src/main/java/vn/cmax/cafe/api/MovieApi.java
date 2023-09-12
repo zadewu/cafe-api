@@ -4,40 +4,32 @@
  */
 package vn.cmax.cafe.api;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import vn.cmax.cafe.api.models.ApiError;
 import vn.cmax.cafe.api.models.Movie;
 import vn.cmax.cafe.api.models.MoviePostRequest;
 import vn.cmax.cafe.api.models.MoviePutRequest;
 import vn.cmax.cafe.api.models.MovieSearchResponse;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.bind.annotation.CookieValue;
-
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-import java.util.List;
-import java.util.Map;
 
 @javax.annotation.Generated(
     value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
-    date = "2023-09-06T22:55:26.603189+07:00[Asia/Ho_Chi_Minh]")
+    date = "2023-09-12T20:04:18.354812+07:00[Asia/Ho_Chi_Minh]")
 @Validated
 public interface MovieApi {
 
@@ -99,6 +91,30 @@ public interface MovieApi {
           @Valid
           @RequestParam(value = "category", required = false)
           Long category);
+
+  @Operation(
+      summary = "Delete movie",
+      description = "Delete movie",
+      tags = {"movie"})
+  @ApiResponses(
+      value = {
+        @ApiResponse(responseCode = "204", description = "No content"),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized",
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ApiError.class)))
+      })
+  @RequestMapping(
+      value = "/movie/{id}",
+      produces = {"application/json"},
+      method = RequestMethod.DELETE)
+  ResponseEntity<Void> movieIdDelete(
+      @Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
+          @PathVariable("id")
+          Long id);
 
   @Operation(
       summary = "Search movie by Id",

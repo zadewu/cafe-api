@@ -72,6 +72,17 @@ public class CategoryApiController implements CategoryApi {
     return new ResponseEntity<CategorySearchResponse>(HttpStatus.BAD_REQUEST);
   }
 
+  @PreAuthorize("hasRole('ADMIN') or hasRole('AUDITOR')")
+  @Override
+  public ResponseEntity<Void> categoryIdDelete(Long id) {
+    try {
+      this.movieCategoryService.deleteCategory(id);
+      return new ResponseEntity(HttpStatus.NO_CONTENT);
+    } catch (CmaxException e) {
+      return ApiErrors.of(e);
+    }
+  }
+
   public ResponseEntity<Category> categoryIdGet(
       @Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
           @PathVariable("id")

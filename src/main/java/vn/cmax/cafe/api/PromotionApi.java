@@ -4,40 +4,32 @@
  */
 package vn.cmax.cafe.api;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import vn.cmax.cafe.api.models.ApiError;
 import vn.cmax.cafe.api.models.Promotion;
 import vn.cmax.cafe.api.models.PromotionPostRequest;
 import vn.cmax.cafe.api.models.PromotionPutRequest;
 import vn.cmax.cafe.api.models.PromotionSearchResponse;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.bind.annotation.CookieValue;
-
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-import java.util.List;
-import java.util.Map;
 
 @javax.annotation.Generated(
     value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
-    date = "2023-09-06T22:55:26.603189+07:00[Asia/Ho_Chi_Minh]")
+    date = "2023-09-12T20:04:18.354812+07:00[Asia/Ho_Chi_Minh]")
 @Validated
 public interface PromotionApi {
 
@@ -74,28 +66,51 @@ public interface PromotionApi {
       produces = {"application/json"},
       method = RequestMethod.GET)
   ResponseEntity<PromotionSearchResponse> promotionGet(
-          @Min(0)
+      @Min(0)
           @Parameter(
-                  in = ParameterIn.QUERY,
-                  description = "",
-                  schema = @Schema(allowableValues = {}))
+              in = ParameterIn.QUERY,
+              description = "",
+              schema = @Schema(allowableValues = {}))
           @Valid
           @RequestParam(value = "page", required = false)
           Integer page,
-          @Min(10)
+      @Min(10)
           @Max(50)
           @Parameter(
-                  in = ParameterIn.QUERY,
-                  description = "",
-                  schema =
+              in = ParameterIn.QUERY,
+              description = "",
+              schema =
                   @Schema(
-                          allowableValues = {},
-                          minimum = "10",
-                          maximum = "50"))
+                      allowableValues = {},
+                      minimum = "10",
+                      maximum = "50"))
           @Valid
           @RequestParam(value = "pageSize", required = false)
-          Integer pageSize
-  );
+          Integer pageSize);
+
+  @Operation(
+      summary = "Delete promotion",
+      description = "Delete promotion",
+      tags = {"promotion"})
+  @ApiResponses(
+      value = {
+        @ApiResponse(responseCode = "204", description = "No content"),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized",
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ApiError.class)))
+      })
+  @RequestMapping(
+      value = "/promotion/{id}",
+      produces = {"application/json"},
+      method = RequestMethod.DELETE)
+  ResponseEntity<Void> promotionIdDelete(
+      @Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
+          @PathVariable("id")
+          Long id);
 
   @Operation(
       summary = "Search promotion by Id",

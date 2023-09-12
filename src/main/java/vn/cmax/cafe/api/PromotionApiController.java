@@ -72,6 +72,17 @@ public class PromotionApiController implements PromotionApi {
     return new ResponseEntity<PromotionSearchResponse>(HttpStatus.BAD_REQUEST);
   }
 
+  @PreAuthorize("hasRole('ADMIN') or hasRole('AUDITOR')")
+  @Override
+  public ResponseEntity<Void> promotionIdDelete(Long id) {
+    try {
+      this.promotionService.deletePromotion(id);
+      return new ResponseEntity(HttpStatus.NO_CONTENT);
+    } catch (CmaxException e) {
+      return ApiErrors.of(e);
+    }
+  }
+
   public ResponseEntity<Promotion> promotionIdGet(
       @Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
           @PathVariable("id")
