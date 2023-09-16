@@ -35,6 +35,9 @@ public class MovieEntity extends DomainAudit implements Serializable {
     @Column(name = "trailer_link")
     private String trailerLink;
 
+    @Column(name="movie_image")
+    private String movieImage;
+
     @ManyToOne
     @JoinColumn(name = "category_id", foreignKey = @ForeignKey(name = "fk_movie_category"))
     private MovieCategoryEntity category;

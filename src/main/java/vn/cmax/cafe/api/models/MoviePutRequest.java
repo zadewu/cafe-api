@@ -27,6 +27,9 @@ public class MoviePutRequest  implements Serializable  {
   @JsonProperty("description")
   private String description = null;
 
+  @JsonProperty("movieImage")
+  private String movieImage = null;
+
   @JsonProperty("trailerLink")
   private String trailerLink = null;
 
@@ -90,6 +93,25 @@ public class MoviePutRequest  implements Serializable  {
     this.description = description;
   }
 
+  public MoviePutRequest movieImage(String movieImage) {
+    this.movieImage = movieImage;
+    return this;
+  }
+
+  /**
+   * Get movieImage
+   * @return movieImage
+   **/
+  @Schema(description = "")
+  
+    public String getMovieImage() {
+    return movieImage;
+  }
+
+  public void setMovieImage(String movieImage) {
+    this.movieImage = movieImage;
+  }
+
   public MoviePutRequest trailerLink(String trailerLink) {
     this.trailerLink = trailerLink;
     return this;
@@ -141,13 +163,14 @@ public class MoviePutRequest  implements Serializable  {
     return Objects.equals(this.name, moviePutRequest.name) &&
         Objects.equals(this.duration, moviePutRequest.duration) &&
         Objects.equals(this.description, moviePutRequest.description) &&
+        Objects.equals(this.movieImage, moviePutRequest.movieImage) &&
         Objects.equals(this.trailerLink, moviePutRequest.trailerLink) &&
         Objects.equals(this.category, moviePutRequest.category);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, duration, description, trailerLink, category);
+    return Objects.hash(name, duration, description, movieImage, trailerLink, category);
   }
 
   @Override
@@ -158,6 +181,7 @@ public class MoviePutRequest  implements Serializable  {
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    duration: ").append(toIndentedString(duration)).append("\n");
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
+    sb.append("    movieImage: ").append(toIndentedString(movieImage)).append("\n");
     sb.append("    trailerLink: ").append(toIndentedString(trailerLink)).append("\n");
     sb.append("    category: ").append(toIndentedString(category)).append("\n");
     sb.append("}");

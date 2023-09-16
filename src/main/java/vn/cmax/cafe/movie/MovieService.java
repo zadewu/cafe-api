@@ -69,6 +69,8 @@ public class MovieService {
         .ifPresent(item -> entity.setDescription(item));
     Optional.ofNullable(moviePutRequest.getTrailerLink())
         .ifPresent(item -> entity.setTrailerLink(item));
+    Optional.ofNullable(moviePutRequest.getMovieImage())
+            .ifPresent(item -> entity.setMovieImage(item));
     this.movieRepository.save(entity);
   }
 
@@ -80,6 +82,7 @@ public class MovieService {
       Objects.requireNonNull(request.getDescription());
       Objects.requireNonNull(request.getCategory());
       Objects.requireNonNull(request.getTrailerLink());
+      Objects.requireNonNull(request.getMovieImage());
     } catch (NullPointerException ex) {
       throw new ValidationException("Request body contains some blank fields", ex);
     }
@@ -88,6 +91,7 @@ public class MovieService {
     movieEntity.setDuration(request.getDuration());
     movieEntity.setDescription(request.getDescription());
     movieEntity.setTrailerLink(request.getTrailerLink());
+    movieEntity.setMovieName(request.getMovieImage());
     Optional<MovieCategoryEntity> categoryEntityOptional =
         this.categoryRepository.findById(request.getCategory());
     if (categoryEntityOptional.isEmpty()) {

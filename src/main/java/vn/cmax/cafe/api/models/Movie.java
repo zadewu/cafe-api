@@ -30,6 +30,9 @@ public class Movie  implements Serializable  {
   @JsonProperty("description")
   private String description = null;
 
+  @JsonProperty("movieImage")
+  private String movieImage = null;
+
   @JsonProperty("trailerLink")
   private String trailerLink = null;
 
@@ -109,6 +112,25 @@ public class Movie  implements Serializable  {
     this.description = description;
   }
 
+  public Movie movieImage(String movieImage) {
+    this.movieImage = movieImage;
+    return this;
+  }
+
+  /**
+   * Get movieImage
+   * @return movieImage
+   **/
+  @Schema(description = "")
+  
+    public String getMovieImage() {
+    return movieImage;
+  }
+
+  public void setMovieImage(String movieImage) {
+    this.movieImage = movieImage;
+  }
+
   public Movie trailerLink(String trailerLink) {
     this.trailerLink = trailerLink;
     return this;
@@ -142,12 +164,13 @@ public class Movie  implements Serializable  {
         Objects.equals(this.name, movie.name) &&
         Objects.equals(this.duration, movie.duration) &&
         Objects.equals(this.description, movie.description) &&
+        Objects.equals(this.movieImage, movie.movieImage) &&
         Objects.equals(this.trailerLink, movie.trailerLink);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, duration, description, trailerLink);
+    return Objects.hash(id, name, duration, description, movieImage, trailerLink);
   }
 
   @Override
@@ -159,6 +182,7 @@ public class Movie  implements Serializable  {
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    duration: ").append(toIndentedString(duration)).append("\n");
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
+    sb.append("    movieImage: ").append(toIndentedString(movieImage)).append("\n");
     sb.append("    trailerLink: ").append(toIndentedString(trailerLink)).append("\n");
     sb.append("}");
     return sb.toString();

@@ -31,7 +31,7 @@ public class MovieCategoryService {
 
   public CategorySearchResponse findAll(int page, int pageSize) {
     Pageable pageable = PageRequest.of(page, pageSize);
-    Page<MovieCategoryEntity> categoryEntities = categoryRepository.findAll(pageable);
+    Page<MovieCategoryEntity> categoryEntities = categoryRepository.findAllByOrderByCreatedDateDesc(pageable);
     CategorySearchResponse response = new CategorySearchResponse().records(new ArrayList<>());
     Page<Category> categories =
         categoryEntities.map(item -> CategoryMapper.INSTANCE.fromEntity(item));

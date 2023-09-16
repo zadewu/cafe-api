@@ -30,6 +30,9 @@ public class MoviePostRequest  implements Serializable  {
   @JsonProperty("trailerLink")
   private String trailerLink = null;
 
+  @JsonProperty("movieImage")
+  private String movieImage = null;
+
   @JsonProperty("category")
   private Long category = null;
 
@@ -109,6 +112,25 @@ public class MoviePostRequest  implements Serializable  {
     this.trailerLink = trailerLink;
   }
 
+  public MoviePostRequest movieImage(String movieImage) {
+    this.movieImage = movieImage;
+    return this;
+  }
+
+  /**
+   * Get movieImage
+   * @return movieImage
+   **/
+  @Schema(description = "")
+  
+    public String getMovieImage() {
+    return movieImage;
+  }
+
+  public void setMovieImage(String movieImage) {
+    this.movieImage = movieImage;
+  }
+
   public MoviePostRequest category(Long category) {
     this.category = category;
     return this;
@@ -142,12 +164,13 @@ public class MoviePostRequest  implements Serializable  {
         Objects.equals(this.duration, moviePostRequest.duration) &&
         Objects.equals(this.description, moviePostRequest.description) &&
         Objects.equals(this.trailerLink, moviePostRequest.trailerLink) &&
+        Objects.equals(this.movieImage, moviePostRequest.movieImage) &&
         Objects.equals(this.category, moviePostRequest.category);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, duration, description, trailerLink, category);
+    return Objects.hash(name, duration, description, trailerLink, movieImage, category);
   }
 
   @Override
@@ -159,6 +182,7 @@ public class MoviePostRequest  implements Serializable  {
     sb.append("    duration: ").append(toIndentedString(duration)).append("\n");
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    trailerLink: ").append(toIndentedString(trailerLink)).append("\n");
+    sb.append("    movieImage: ").append(toIndentedString(movieImage)).append("\n");
     sb.append("    category: ").append(toIndentedString(category)).append("\n");
     sb.append("}");
     return sb.toString();

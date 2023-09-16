@@ -692,6 +692,8 @@ components:
           type: integer
         description:
           type: string
+        movieImage:
+          type: string
         trailerLink:
           type: string
     MoviePostRequest:
@@ -705,6 +707,8 @@ components:
           type: string
         trailerLink:
           type: string
+        movieImage:
+          type: string
         category:
           type: integer
           format: int64
@@ -716,6 +720,8 @@ components:
         duration:
           type: integer
         description:
+          type: string
+        movieImage:
           type: string
         trailerLink:
           type: string
