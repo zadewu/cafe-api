@@ -12,6 +12,7 @@ public class CorsConfig {
   public CorsFilter corsFilter() {
     CorsConfiguration corsConfig = new CorsConfiguration();
     corsConfig.setAllowCredentials(true);
+    corsConfig.addAllowedOrigin("https://cmaxcafe.vn");
     corsConfig.addAllowedOrigin("http://localhost:4200"); // Allow requests from http://localhost
     corsConfig.addAllowedOrigin("https://cmax-cafe.web.app");
     corsConfig.addAllowedHeader("*"); // You can customize allowed headers here
