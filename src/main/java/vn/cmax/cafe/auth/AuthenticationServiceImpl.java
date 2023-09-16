@@ -1,6 +1,5 @@
 package vn.cmax.cafe.auth;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +19,7 @@ import vn.cmax.cafe.api.models.RefreshTokenResponse;
 import vn.cmax.cafe.configuration.model.SecurityProperties;
 import vn.cmax.cafe.exception.ApiErrorMessages;
 import vn.cmax.cafe.exception.CmaxException;
-import vn.cmax.cafe.exception.UnauthorizedException;
+import vn.cmax.cafe.exception.ForbiddenException;
 import vn.cmax.cafe.security.jwt.JwtTokenManager;
 import vn.cmax.cafe.security.jwt.JwtTokenService;
 import vn.cmax.cafe.security.jwt.TokenType;
@@ -52,12 +51,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     Optional<UserEntity> userEntityOptional =
         this.userRepository.findByUsername(authenticationRequest.getUsername());
     if (userEntityOptional.isEmpty()) {
-      throw new UnauthorizedException(ApiErrorMessages.INVALID_USERNAME_PASSWORD_ERR_MESSAGE);
+      throw new ForbiddenException(ApiErrorMessages.INVALID_USERNAME_PASSWORD_ERR_MESSAGE);
     }
     UserEntity userEntity = userEntityOptional.get();
     String userPassword = userEntity.getPassword();
     if (!passwordEncoder.matches(authenticationRequest.getPassword(), userPassword)) {
-      throw new UnauthorizedException(ApiErrorMessages.INVALID_USERNAME_PASSWORD_ERR_MESSAGE);
+      throw new ForbiddenException(ApiErrorMessages.INVALID_USERNAME_PASSWORD_ERR_MESSAGE);
     }
     CacheToken token = setJwtTokenForUser(userEntity, response);
     AuthenticationResponse authenticationResponse = new AuthenticationResponse();
@@ -73,7 +72,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication == null) {
       log.warn(ApiErrorMessages.MISSING_AUTHENTICATED_USER);
-      throw new UnauthorizedException(ApiErrorMessages.MISSING_AUTHENTICATED_USER);
+      throw new ForbiddenException(ApiErrorMessages.MISSING_AUTHENTICATED_USER);
     }
 
     Object principal = authentication.getPrincipal();
@@ -107,7 +106,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     final String userId = jwtTokenManager.getUserId(refreshToken);
     Optional<UserEntity> userEntityOpt = this.userRepository.findById(Long.valueOf(userId));
     if (userEntityOpt.isEmpty()) {
-      throw new UnauthorizedException(ApiErrorMessages.MISSING_AUTHENTICATED_USER);
+      throw new ForbiddenException(ApiErrorMessages.MISSING_AUTHENTICATED_USER);
     }
     UserEntity userEntity = userEntityOpt.get();
     Token accessToken = this.jwtTokenManager.createToken(userEntity, TokenType.ACCESS_TOKEN);

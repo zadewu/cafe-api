@@ -77,8 +77,8 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
       HttpServletResponse response, JwtAuthentication jwtAuthentication) throws IOException {
     logger.warn("*** JwtTokenAuthenticationFilter: " + jwtAuthentication.getMessage());
     ApiError errorResponse = new ApiError();
-    errorResponse.code(HttpStatus.UNAUTHORIZED.value()).message(jwtAuthentication.getMessage());
-    response.setStatus(HttpStatus.UNAUTHORIZED.value());
+    errorResponse.code(HttpStatus.FORBIDDEN.value()).message(jwtAuthentication.getMessage());
+    response.setStatus(HttpStatus.FORBIDDEN.value());
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
     response.getWriter().write(new ObjectMapper().writeValueAsString(errorResponse));
   }
