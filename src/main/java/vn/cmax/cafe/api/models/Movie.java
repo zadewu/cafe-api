@@ -4,6 +4,7 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
+import vn.cmax.cafe.api.models.Category;
 import java.io.Serializable;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
@@ -35,6 +36,9 @@ public class Movie  implements Serializable  {
 
   @JsonProperty("trailerLink")
   private String trailerLink = null;
+
+  @JsonProperty("category")
+  private Category category = null;
 
   public Movie id(Long id) {
     this.id = id;
@@ -150,6 +154,26 @@ public class Movie  implements Serializable  {
     this.trailerLink = trailerLink;
   }
 
+  public Movie category(Category category) {
+    this.category = category;
+    return this;
+  }
+
+  /**
+   * Get category
+   * @return category
+   **/
+  @Schema(description = "")
+  
+    @Valid
+    public Category getCategory() {
+    return category;
+  }
+
+  public void setCategory(Category category) {
+    this.category = category;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -165,12 +189,13 @@ public class Movie  implements Serializable  {
         Objects.equals(this.duration, movie.duration) &&
         Objects.equals(this.description, movie.description) &&
         Objects.equals(this.movieImage, movie.movieImage) &&
-        Objects.equals(this.trailerLink, movie.trailerLink);
+        Objects.equals(this.trailerLink, movie.trailerLink) &&
+        Objects.equals(this.category, movie.category);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, duration, description, movieImage, trailerLink);
+    return Objects.hash(id, name, duration, description, movieImage, trailerLink, category);
   }
 
   @Override
@@ -184,6 +209,7 @@ public class Movie  implements Serializable  {
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    movieImage: ").append(toIndentedString(movieImage)).append("\n");
     sb.append("    trailerLink: ").append(toIndentedString(trailerLink)).append("\n");
+    sb.append("    category: ").append(toIndentedString(category)).append("\n");
     sb.append("}");
     return sb.toString();
   }

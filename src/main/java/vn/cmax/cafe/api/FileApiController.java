@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import vn.cmax.cafe.api.models.FileUploadResponse;
 import vn.cmax.cafe.configuration.model.CmaxConfigurationProperties;
 import vn.cmax.cafe.exception.ApiErrors;
 import vn.cmax.cafe.exception.CmaxException;
@@ -44,7 +45,7 @@ public class FileApiController implements FileApi {
   }
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('AUDITOR')")
-  public ResponseEntity<String> fileUploadPost(
+  public ResponseEntity<FileUploadResponse> fileUploadPost(
       @Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema())
           @RequestParam(value = "file", required = false)
           MultipartFile file) {
@@ -55,13 +56,15 @@ public class FileApiController implements FileApi {
       return ApiErrors.of(e);
     }
     if (StringUtils.isBlank(fileName)) {
-      return new ResponseEntity<String>("Error when upload file", HttpStatus.INTERNAL_SERVER_ERROR);
+      return new ResponseEntity("Error when upload file", HttpStatus.INTERNAL_SERVER_ERROR);
     }
     String domain =
         StringUtils.isBlank(configurationProperties.getDomainName())
             ? "localhost"
             : configurationProperties.getDomainName();
     String remoteFileLocation = domain + fileName;
-    return new ResponseEntity<String>(remoteFileLocation.replaceAll("\\s", ""), HttpStatus.CREATED);
+    FileUploadResponse response = new FileUploadResponse();
+    response.setUrl(remoteFileLocation.replaceAll("\\s", ""));
+    return new ResponseEntity<FileUploadResponse>(response, HttpStatus.CREATED);
   }
 }

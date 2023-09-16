@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import vn.cmax.cafe.api.models.ApiError;
+import vn.cmax.cafe.api.models.FileUploadResponse;
 
 @javax.annotation.Generated(
     value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
@@ -64,7 +65,7 @@ public interface FileApi {
       produces = {"application/json"},
       consumes = {"multipart/*"},
       method = RequestMethod.POST)
-  ResponseEntity<String> fileUploadPost(
+  ResponseEntity<FileUploadResponse> fileUploadPost(
       @Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema())
           @RequestParam(value = "file", required = false)
           MultipartFile file);

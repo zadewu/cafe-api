@@ -479,8 +479,11 @@ paths:
                   format: binary
       responses:
         '201':
-          description: Url of file
-          type: string
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileUploadResponse'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -696,6 +699,8 @@ components:
           type: string
         trailerLink:
           type: string
+        category:
+          $ref: '#/components/schemas/Category'
     MoviePostRequest:
       type: object
       properties:
@@ -770,6 +775,12 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/Promotion'
+    FileUploadResponse:
+      type: object
+      properties:
+        url:
+          type: string
+          example: 'https://example.com/image.png'
   responses:
     BadRequest:
       description: Bad request

@@ -91,7 +91,7 @@ public class MovieService {
     movieEntity.setDuration(request.getDuration());
     movieEntity.setDescription(request.getDescription());
     movieEntity.setTrailerLink(request.getTrailerLink());
-    movieEntity.setMovieName(request.getMovieImage());
+    movieEntity.setMovieImage(request.getMovieImage());
     Optional<MovieCategoryEntity> categoryEntityOptional =
         this.categoryRepository.findById(request.getCategory());
     if (categoryEntityOptional.isEmpty()) {
