@@ -70,7 +70,18 @@ public class MovieService {
     Optional.ofNullable(moviePutRequest.getTrailerLink())
         .ifPresent(item -> entity.setTrailerLink(item));
     Optional.ofNullable(moviePutRequest.getMovieImage())
-            .ifPresent(item -> entity.setMovieImage(item));
+        .ifPresent(item -> entity.setMovieImage(item));
+    if (moviePutRequest.getCategory() != null) {
+      Optional<MovieCategoryEntity> categoryEntityOptional =
+          this.categoryRepository.findById(moviePutRequest.getCategory());
+      if (categoryEntityOptional.isEmpty()) {
+        throw new ValidationException(
+                "Cannot assign movie to category with id = ["
+                        + moviePutRequest.getCategory()
+                        + "]. This category is not existed");
+      }
+      entity.setCategory(categoryEntityOptional.get());
+    }
     this.movieRepository.save(entity);
   }
 
@@ -107,7 +118,7 @@ public class MovieService {
   }
 
   @Transactional
-  public void deleteMovie(Long id) throws CmaxException{
+  public void deleteMovie(Long id) throws CmaxException {
     Optional<MovieEntity> movieOpt = this.movieRepository.findById(id);
     if (movieOpt.isEmpty()) {
       throw new ValidationException("No movie with Id " + id);
