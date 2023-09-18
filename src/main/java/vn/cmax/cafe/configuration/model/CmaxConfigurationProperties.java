@@ -10,4 +10,5 @@ import lombok.Setter;
 public class CmaxConfigurationProperties {
     private String fileDirectory;
     private String domainName;
+    private CmaxPublicInformation info;
 }

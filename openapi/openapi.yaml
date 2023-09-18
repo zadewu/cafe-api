@@ -19,6 +19,8 @@ tags:
     description: Operation about user
   - name: file
     description: Operation about file
+  - name: info
+    description: Operation about information
 paths:
   /auth/login:
     post:
@@ -492,6 +494,22 @@ paths:
           $ref: '#/components/responses/ServerError'
       security:
         - BearerAuth: [ ]
+  /information:
+    get:
+      description: Retrieve all public info
+      tags:
+        - info
+      summary: Retrieve all public info
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InfoResponse'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
   #Empty lie for separation
 components:
   parameters:
@@ -750,6 +768,8 @@ components:
           format: int64
         title:
           type: string
+        subtitle:
+          type: string
         content:
           type: string
     PromotionPutRequest:
@@ -781,6 +801,22 @@ components:
         url:
           type: string
           example: 'https://example.com/image.png'
+    InfoResponse:
+      type: object
+      properties:
+        hotline:
+          type: string
+        socialMedia:
+          $ref: '#/components/schemas/SocialMedia'
+    SocialMedia:
+      type: object
+      properties:
+        facebook:
+          type: string
+        instagram:
+          type: string
+        tiktok:
+          type: string
   responses:
     BadRequest:
       description: Bad request
