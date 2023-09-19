@@ -772,6 +772,8 @@ components:
           type: string
         content:
           type: string
+        updatedDate:
+          type: string
     PromotionPutRequest:
       type: object
       properties:

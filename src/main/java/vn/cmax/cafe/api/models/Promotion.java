@@ -30,6 +30,9 @@ public class Promotion  implements Serializable  {
   @JsonProperty("content")
   private String content = null;
 
+  @JsonProperty("updatedDate")
+  private String updatedDate = null;
+
   public Promotion id(Long id) {
     this.id = id;
     return this;
@@ -106,6 +109,25 @@ public class Promotion  implements Serializable  {
     this.content = content;
   }
 
+  public Promotion updatedDate(String updatedDate) {
+    this.updatedDate = updatedDate;
+    return this;
+  }
+
+  /**
+   * Get updatedDate
+   * @return updatedDate
+   **/
+  @Schema(description = "")
+  
+    public String getUpdatedDate() {
+    return updatedDate;
+  }
+
+  public void setUpdatedDate(String updatedDate) {
+    this.updatedDate = updatedDate;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -119,12 +141,13 @@ public class Promotion  implements Serializable  {
     return Objects.equals(this.id, promotion.id) &&
         Objects.equals(this.title, promotion.title) &&
         Objects.equals(this.subtitle, promotion.subtitle) &&
-        Objects.equals(this.content, promotion.content);
+        Objects.equals(this.content, promotion.content) &&
+        Objects.equals(this.updatedDate, promotion.updatedDate);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, title, subtitle, content);
+    return Objects.hash(id, title, subtitle, content, updatedDate);
   }
 
   @Override
@@ -136,6 +159,7 @@ public class Promotion  implements Serializable  {
     sb.append("    title: ").append(toIndentedString(title)).append("\n");
     sb.append("    subtitle: ").append(toIndentedString(subtitle)).append("\n");
     sb.append("    content: ").append(toIndentedString(content)).append("\n");
+    sb.append("    updatedDate: ").append(toIndentedString(updatedDate)).append("\n");
     sb.append("}");
     return sb.toString();
   }

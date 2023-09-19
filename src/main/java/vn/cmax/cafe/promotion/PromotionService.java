@@ -75,7 +75,7 @@ public class PromotionService {
     Pageable pageable = PageRequest.of(page, pageSize);
     PromotionSearchResponse response = new PromotionSearchResponse().records(new ArrayList<>());
     Page<PromotionEntity> promotionEntityPage =
-        this.promotionRepository.findAllByOrderByCreatedDateDesc(pageable);
+        this.promotionRepository.findAllByOrderByUpdatedDateDesc(pageable);
     Page<Promotion> promotions =
         promotionEntityPage.map(item -> PromotionMapper.INSTANCE.fromEntity(item));
     response
