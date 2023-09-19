@@ -779,12 +779,16 @@ components:
           type: string
         content:
           type: string
+        subtitle:
+          type: string
     PromotionPostRequest:
       type: object
       properties:
         title:
           type: string
         content:
+          type: string
+        subtitle:
           type: string
     PromotionSearchResponse:
       allOf:

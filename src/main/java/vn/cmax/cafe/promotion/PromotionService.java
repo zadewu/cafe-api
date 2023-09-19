@@ -32,9 +32,13 @@ public class PromotionService {
     if (StringUtils.isBlank(request.getContent())) {
       throw new ValidationException("Promotion content cannot be blank");
     }
+    if (StringUtils.isBlank(request.getSubtitle())) {
+      throw new ValidationException("Promotion subtitle cannot be blank");
+    }
     PromotionEntity entity = new PromotionEntity();
     entity.setTitle(request.getTitle());
     entity.setContent(request.getContent());
+    entity.setSubtitle(request.getSubtitle());
     PromotionEntity saved = this.promotionRepository.save(entity);
     return PromotionMapper.INSTANCE.fromEntity(saved);
   }
@@ -51,6 +55,7 @@ public class PromotionService {
     PromotionEntity saved = promotionEntityOptional.get();
     Optional.ofNullable(request.getTitle()).ifPresent(item -> saved.setTitle(item));
     Optional.ofNullable(request.getContent()).ifPresent(item -> saved.setContent(item));
+    Optional.ofNullable(request.getSubtitle()).ifPresent(item -> saved.setSubtitle(item));
     this.promotionRepository.save(saved);
   }
 

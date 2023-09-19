@@ -24,6 +24,9 @@ public class PromotionPostRequest  implements Serializable  {
   @JsonProperty("content")
   private String content = null;
 
+  @JsonProperty("subtitle")
+  private String subtitle = null;
+
   public PromotionPostRequest title(String title) {
     this.title = title;
     return this;
@@ -62,6 +65,25 @@ public class PromotionPostRequest  implements Serializable  {
     this.content = content;
   }
 
+  public PromotionPostRequest subtitle(String subtitle) {
+    this.subtitle = subtitle;
+    return this;
+  }
+
+  /**
+   * Get subtitle
+   * @return subtitle
+   **/
+  @Schema(description = "")
+  
+    public String getSubtitle() {
+    return subtitle;
+  }
+
+  public void setSubtitle(String subtitle) {
+    this.subtitle = subtitle;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -73,12 +95,13 @@ public class PromotionPostRequest  implements Serializable  {
     }
     PromotionPostRequest promotionPostRequest = (PromotionPostRequest) o;
     return Objects.equals(this.title, promotionPostRequest.title) &&
-        Objects.equals(this.content, promotionPostRequest.content);
+        Objects.equals(this.content, promotionPostRequest.content) &&
+        Objects.equals(this.subtitle, promotionPostRequest.subtitle);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(title, content);
+    return Objects.hash(title, content, subtitle);
   }
 
   @Override
@@ -88,6 +111,7 @@ public class PromotionPostRequest  implements Serializable  {
     
     sb.append("    title: ").append(toIndentedString(title)).append("\n");
     sb.append("    content: ").append(toIndentedString(content)).append("\n");
+    sb.append("    subtitle: ").append(toIndentedString(subtitle)).append("\n");
     sb.append("}");
     return sb.toString();
   }
