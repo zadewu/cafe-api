@@ -30,6 +30,9 @@ public class Promotion  implements Serializable  {
   @JsonProperty("content")
   private String content = null;
 
+  @JsonProperty("image")
+  private String image = null;
+
   @JsonProperty("updatedDate")
   private String updatedDate = null;
 
@@ -109,6 +112,25 @@ public class Promotion  implements Serializable  {
     this.content = content;
   }
 
+  public Promotion image(String image) {
+    this.image = image;
+    return this;
+  }
+
+  /**
+   * Get image
+   * @return image
+   **/
+  @Schema(description = "")
+  
+    public String getImage() {
+    return image;
+  }
+
+  public void setImage(String image) {
+    this.image = image;
+  }
+
   public Promotion updatedDate(String updatedDate) {
     this.updatedDate = updatedDate;
     return this;
@@ -142,12 +164,13 @@ public class Promotion  implements Serializable  {
         Objects.equals(this.title, promotion.title) &&
         Objects.equals(this.subtitle, promotion.subtitle) &&
         Objects.equals(this.content, promotion.content) &&
+        Objects.equals(this.image, promotion.image) &&
         Objects.equals(this.updatedDate, promotion.updatedDate);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, title, subtitle, content, updatedDate);
+    return Objects.hash(id, title, subtitle, content, image, updatedDate);
   }
 
   @Override
@@ -159,6 +182,7 @@ public class Promotion  implements Serializable  {
     sb.append("    title: ").append(toIndentedString(title)).append("\n");
     sb.append("    subtitle: ").append(toIndentedString(subtitle)).append("\n");
     sb.append("    content: ").append(toIndentedString(content)).append("\n");
+    sb.append("    image: ").append(toIndentedString(image)).append("\n");
     sb.append("    updatedDate: ").append(toIndentedString(updatedDate)).append("\n");
     sb.append("}");
     return sb.toString();

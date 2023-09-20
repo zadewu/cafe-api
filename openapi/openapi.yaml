@@ -772,6 +772,8 @@ components:
           type: string
         content:
           type: string
+        image:
+          type: string
         updatedDate:
           type: string
     PromotionPutRequest:
@@ -783,6 +785,8 @@ components:
           type: string
         subtitle:
           type: string
+        image:
+          type: string
     PromotionPostRequest:
       type: object
       properties:
@@ -791,6 +795,8 @@ components:
         content:
           type: string
         subtitle:
+          type: string
+        image:
           type: string
     PromotionSearchResponse:
       allOf:
