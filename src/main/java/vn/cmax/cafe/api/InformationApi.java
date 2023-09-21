@@ -46,7 +46,7 @@ public interface InformationApi {
       })
   @RequestMapping(
       value = "/information",
-      produces = {"application/json"},
+      produces = {"application/json; charset=UTF-8"},
       method = RequestMethod.GET)
   ResponseEntity<InfoResponse> informationGet();
 }

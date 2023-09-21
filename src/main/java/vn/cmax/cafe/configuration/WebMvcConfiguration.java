@@ -8,5 +8,5 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebMvcConfiguration implements WebMvcConfigurer {
-  
+
 }
