@@ -1,16 +1,18 @@
 package vn.cmax.cafe.user;
 
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Set;
 import javax.transaction.Transactional;
-
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import vn.cmax.cafe.api.models.User;
-import vn.cmax.cafe.api.models.UserRequest;
+import vn.cmax.cafe.api.models.*;
 import vn.cmax.cafe.auth.AuthenticationService;
 import vn.cmax.cafe.exception.CmaxException;
 import vn.cmax.cafe.exception.ValidationException;
@@ -45,9 +47,11 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public UserEntity getUser(Long id) {
+  public UserEntity getUser(Long id) throws CmaxException {
     Optional<UserEntity> userEntityOptional = this.userRepository.findById(id);
-    return userEntityOptional.stream().findFirst().orElseThrow();
+    return userEntityOptional.stream()
+        .findFirst()
+        .orElseThrow(() -> new ValidationException("Cannot find user with id " + id));
   }
 
   @Transactional
@@ -89,5 +93,33 @@ public class UserServiceImpl implements UserService {
       }
     }
     return this.userRepository.save(updatedUser);
+  }
+
+  @Override
+  @Transactional
+  public void deleteUser(Long id) throws CmaxException {
+    UserEntity userEntity = this.getUser(id);
+    this.userRepository.delete(userEntity);
+  }
+
+  @Override
+  public UserSearchResponse findAllUser(int page, int pageSize, Role role) throws CmaxException {
+    Pageable pageable = PageRequest.of(page, pageSize);
+    UserSearchResponse response = new UserSearchResponse().records(new ArrayList<>());
+    Page<UserEntity> userEntityPage;
+    if (role != null) {
+      UserRole convertRole = UserRole.valueOf(role.name());
+      userEntityPage = this.userRepository.findAllByRolesOrderByUpdatedDateDesc(pageable, convertRole);
+    } else {
+      userEntityPage = this.userRepository.findAllByOrderByUpdatedDateDesc(pageable);
+    }
+    Page<User> users = userEntityPage.map(item -> UserMapper.INSTANCE.fromEntity(item));
+    response
+        .records(users.getContent())
+        .pageSize(users.getSize())
+        .totalPage(users.getTotalPages())
+        .totalCount(users.getTotalElements())
+        .currentPage(users.getNumber());
+    return response;
   }
 }

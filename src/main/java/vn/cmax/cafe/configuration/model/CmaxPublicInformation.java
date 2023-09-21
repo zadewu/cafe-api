@@ -10,6 +10,7 @@ import lombok.Setter;import java.util.HashMap;import java.util.Map;
 @NoArgsConstructor
 public class CmaxPublicInformation {
     private String hotline;
+    private String address;
     private String facebook;
     private String instagram;
     private String tiktok;

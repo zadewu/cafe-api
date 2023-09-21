@@ -34,6 +34,9 @@ public class InformationApiController implements InformationApi {
     Optional.ofNullable(cmaxPublicInformation.getHotline())
         .map(item -> StringUtils.isBlank(item) ? StringUtils.EMPTY : item)
         .ifPresent(item -> response.setHotline(item));
+    Optional.ofNullable(cmaxPublicInformation.getAddress())
+        .map(item -> StringUtils.isBlank(item) ? StringUtils.EMPTY : item)
+        .ifPresent(item -> response.setAddress(item));
     SocialMedia socialMedia = new SocialMedia();
     Optional.ofNullable(cmaxPublicInformation.getFacebook())
         .map(item -> StringUtils.isBlank(item) ? StringUtils.EMPTY : item)

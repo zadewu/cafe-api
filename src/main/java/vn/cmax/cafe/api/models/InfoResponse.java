@@ -22,6 +22,9 @@ public class InfoResponse  implements Serializable  {
   @JsonProperty("hotline")
   private String hotline = null;
 
+  @JsonProperty("address")
+  private String address = null;
+
   @JsonProperty("socialMedia")
   private SocialMedia socialMedia = null;
 
@@ -42,6 +45,25 @@ public class InfoResponse  implements Serializable  {
 
   public void setHotline(String hotline) {
     this.hotline = hotline;
+  }
+
+  public InfoResponse address(String address) {
+    this.address = address;
+    return this;
+  }
+
+  /**
+   * Get address
+   * @return address
+   **/
+  @Schema(description = "")
+  
+    public String getAddress() {
+    return address;
+  }
+
+  public void setAddress(String address) {
+    this.address = address;
   }
 
   public InfoResponse socialMedia(SocialMedia socialMedia) {
@@ -75,12 +97,13 @@ public class InfoResponse  implements Serializable  {
     }
     InfoResponse infoResponse = (InfoResponse) o;
     return Objects.equals(this.hotline, infoResponse.hotline) &&
+        Objects.equals(this.address, infoResponse.address) &&
         Objects.equals(this.socialMedia, infoResponse.socialMedia);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(hotline, socialMedia);
+    return Objects.hash(hotline, address, socialMedia);
   }
 
   @Override
@@ -89,6 +112,7 @@ public class InfoResponse  implements Serializable  {
     sb.append("class InfoResponse {\n");
     
     sb.append("    hotline: ").append(toIndentedString(hotline)).append("\n");
+    sb.append("    address: ").append(toIndentedString(address)).append("\n");
     sb.append("    socialMedia: ").append(toIndentedString(socialMedia)).append("\n");
     sb.append("}");
     return sb.toString();

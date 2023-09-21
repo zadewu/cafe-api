@@ -615,6 +615,9 @@ components:
     User:
       type: object
       properties:
+        id:
+          type: integer
+          format: int64
         username:
           type: string
           example: mockuser
@@ -817,6 +820,8 @@ components:
       type: object
       properties:
         hotline:
+          type: string
+        address:
           type: string
         socialMedia:
           $ref: '#/components/schemas/SocialMedia'

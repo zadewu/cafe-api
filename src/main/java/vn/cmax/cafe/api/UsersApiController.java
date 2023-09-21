@@ -37,28 +37,17 @@ import vn.cmax.cafe.utils.RequestValidators;
 public class UsersApiController implements UsersApi {
 
   private static final Logger log = LoggerFactory.getLogger(UsersApiController.class);
-
-  private final ObjectMapper objectMapper;
-
-  private final HttpServletRequest request;
-
   private final UserService userService;
 
   private final AuthenticationService authenticationService;
 
   @org.springframework.beans.factory.annotation.Autowired
-  public UsersApiController(
-      ObjectMapper objectMapper,
-      HttpServletRequest request,
-      UserService userService,
-      AuthenticationService authenticationService) {
-    this.objectMapper = objectMapper;
-    this.request = request;
+  public UsersApiController(UserService userService, AuthenticationService authenticationService) {
     this.userService = userService;
     this.authenticationService = authenticationService;
   }
 
-  @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<UserSearchResponse> usersGet(
       @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema())
           @Valid
@@ -88,18 +77,12 @@ public class UsersApiController implements UsersApi {
           @Valid
           @RequestParam(value = "pageSize", required = false)
           Integer pageSize) {
-    String accept = request.getHeader("Accept");
-    if (accept != null && accept.contains("application/json")) {
-      try {
-        return new ResponseEntity<UserSearchResponse>(
-            objectMapper.readValue("\"\"", UserSearchResponse.class), HttpStatus.NOT_IMPLEMENTED);
-      } catch (IOException e) {
-        log.error("Couldn't serialize response for content type application/json", e);
-        return new ResponseEntity<UserSearchResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-      }
+    try {
+      UserSearchResponse response = this.userService.findAllUser(page, pageSize, role);
+      return new ResponseEntity<>(response, HttpStatus.OK);
+    } catch (CmaxException e) {
+      return ApiErrors.of(e);
     }
-
-    return new ResponseEntity<UserSearchResponse>(HttpStatus.NOT_IMPLEMENTED);
   }
 
   @PreAuthorize("hasRole('ADMIN')")

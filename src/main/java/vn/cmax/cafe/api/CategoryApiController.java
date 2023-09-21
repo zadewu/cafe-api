@@ -64,12 +64,8 @@ public class CategoryApiController implements CategoryApi {
           @Valid
           @RequestParam(value = "pageSize", required = false)
           Integer pageSize) {
-    String accept = request.getHeader("Accept");
-    if (accept != null && accept.contains("application/json")) {
-      CategorySearchResponse response = this.movieCategoryService.findAll(page, pageSize);
-      return new ResponseEntity<CategorySearchResponse>(response, HttpStatus.OK);
-    }
-    return new ResponseEntity<CategorySearchResponse>(HttpStatus.BAD_REQUEST);
+    CategorySearchResponse response = this.movieCategoryService.findAll(page, pageSize);
+    return new ResponseEntity<CategorySearchResponse>(response, HttpStatus.OK);
   }
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('AUDITOR')")
