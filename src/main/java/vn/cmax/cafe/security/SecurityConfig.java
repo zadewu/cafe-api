@@ -26,6 +26,7 @@ public class SecurityConfig {
   private final CustomAccessDeniedHandler accessDeniedHandler;
   private final CustomAuthenticationFailedHandler authenticationFailedHandler;
 
+
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http.httpBasic()
@@ -38,7 +39,14 @@ public class SecurityConfig {
         .authorizeRequests()
         .antMatchers("/auth/login/**", "/auth/refresh**", "/users/signup**")
         .permitAll()
-        .antMatchers(HttpMethod.GET, "/promotion**", "/movie**", "/category**", "/information**")
+        .antMatchers(HttpMethod.GET,
+                "/promotion**",
+                "/promotion/**",
+                "/movie**",
+                "/movie/**",
+                "/category**",
+                "/category/**",
+                "/information**")
         .permitAll()
         .anyRequest()
         .authenticated()
