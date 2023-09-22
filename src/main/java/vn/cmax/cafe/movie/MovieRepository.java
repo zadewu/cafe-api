@@ -8,11 +8,11 @@ import vn.cmax.cafe.category.MovieCategoryEntity;
 import java.util.List;
 
 public interface MovieRepository extends JpaRepository<MovieEntity, Long> {
-    List<MovieEntity> findByMovieNameContainsIgnoreCase(String query);
-
     List<MovieEntity> findByCategoryId(Long id);
 
     Page<MovieEntity> findAllByOrderByCreatedDateDesc(Pageable pageable);
 
     Page<MovieEntity> findAllByCategoryIdOrderByCreatedDateDesc(Long id, Pageable pageable);
+
+    Page<MovieEntity> findByMovieNameContainsIgnoreCaseOrderByCreatedDateDesc(String keyword, Pageable pageable);
 }

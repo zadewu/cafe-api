@@ -45,6 +45,9 @@ public class UserEntity extends DomainAudit implements Serializable, UserDetails
   @Column(name = "lastname", nullable = false)
   private String lastName;
 
+  @Column(name = "phone_number")
+  private String phoneNumber;
+
   @Column(name = "roles", nullable = false)
   @Enumerated(EnumType.STRING)
   @ElementCollection(targetClass = UserRole.class, fetch = FetchType.EAGER)

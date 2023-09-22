@@ -68,8 +68,12 @@ public class MovieApiController implements MovieApi {
       @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema())
           @Valid
           @RequestParam(value = "category", required = false)
-          Long category) {
-    MovieSearchResponse response = this.movieService.findAllMovies(page, pageSize, category);
+          Long category,
+      @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema())
+      @Valid
+      @RequestParam(value = "keyword", required = false)
+      String keyword) {
+    MovieSearchResponse response = this.movieService.findAllMovies(page, pageSize, category, keyword);
     return new ResponseEntity<MovieSearchResponse>(response, HttpStatus.OK);
   }
 

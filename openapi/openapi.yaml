@@ -269,6 +269,7 @@ paths:
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/pageSize'
         - $ref: '#/components/parameters/category'
+        - $ref: '#/components/parameters/keyword'
       responses:
         '200':
           description: OK
@@ -546,6 +547,10 @@ components:
       schema:
         type: integer
         format: int64
+    keyword:
+      name: keyword
+      in: query
+      type: string
   schemas:
     ApiError:
       type: object

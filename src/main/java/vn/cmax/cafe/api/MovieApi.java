@@ -90,7 +90,11 @@ public interface MovieApi {
       @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema())
           @Valid
           @RequestParam(value = "category", required = false)
-          Long category);
+          Long category,
+      @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema())
+      @Valid
+      @RequestParam(value = "keyword", required = false)
+      String keyword);
 
   @Operation(
       summary = "Delete movie",

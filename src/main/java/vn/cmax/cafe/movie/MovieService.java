@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.Optional;
 import javax.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,7 +28,8 @@ public class MovieService {
   private MovieRepository movieRepository;
   private MovieCategoryRepository categoryRepository;
 
-  public MovieSearchResponse findAllMovies(int page, int pageSize, Long categoryId) {
+  public MovieSearchResponse findAllMovies(
+      int page, int pageSize, Long categoryId, String keyword) {
     Pageable pageable = PageRequest.of(page, pageSize);
     MovieSearchResponse response = new MovieSearchResponse().records(new ArrayList<>());
     Page<MovieEntity> movieEntities;
@@ -36,6 +38,11 @@ public class MovieService {
           this.movieRepository.findAllByCategoryIdOrderByCreatedDateDesc(categoryId, pageable);
     } else {
       movieEntities = this.movieRepository.findAllByOrderByCreatedDateDesc(pageable);
+    }
+    if (StringUtils.isNotBlank(keyword)) {
+      movieEntities =
+          this.movieRepository.findByMovieNameContainsIgnoreCaseOrderByCreatedDateDesc(
+              keyword, pageable);
     }
     Page<Movie> movies = movieEntities.map(item -> MovieMapper.INSTANCE.fromEntity(item));
     response
@@ -76,9 +83,9 @@ public class MovieService {
           this.categoryRepository.findById(moviePutRequest.getCategory());
       if (categoryEntityOptional.isEmpty()) {
         throw new ValidationException(
-                "Cannot assign movie to category with id = ["
-                        + moviePutRequest.getCategory()
-                        + "]. This category is not existed");
+            "Cannot assign movie to category with id = ["
+                + moviePutRequest.getCategory()
+                + "]. This category is not existed");
       }
       entity.setCategory(categoryEntityOptional.get());
     }
