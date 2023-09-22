@@ -1,13 +1,10 @@
 package vn.cmax.cafe.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Optional;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import org.slf4j.Logger;
@@ -19,13 +16,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import vn.cmax.cafe.api.models.ApiError;
-import vn.cmax.cafe.api.models.Role;
-import vn.cmax.cafe.api.models.UserRequest;
-import vn.cmax.cafe.api.models.UserSearchResponse;
+import vn.cmax.cafe.api.models.*;
 import vn.cmax.cafe.auth.AuthenticationService;
 import vn.cmax.cafe.exception.ApiErrors;
 import vn.cmax.cafe.exception.CmaxException;
+import vn.cmax.cafe.mapper.UserMapper;
 import vn.cmax.cafe.user.UserEntity;
 import vn.cmax.cafe.user.UserService;
 import vn.cmax.cafe.utils.RequestValidators;
@@ -47,7 +42,7 @@ public class UsersApiController implements UsersApi {
     this.authenticationService = authenticationService;
   }
 
-    @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<UserSearchResponse> usersGet(
       @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema())
           @Valid
@@ -80,6 +75,18 @@ public class UsersApiController implements UsersApi {
     try {
       UserSearchResponse response = this.userService.findAllUser(page, pageSize, role);
       return new ResponseEntity<>(response, HttpStatus.OK);
+    } catch (CmaxException e) {
+      return ApiErrors.of(e);
+    }
+  }
+
+  @Override
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<User> usersIdGet(Long id) {
+    try {
+      UserEntity userEntity = this.userService.getUser(id);
+      User user = UserMapper.INSTANCE.fromEntity(userEntity);
+      return new ResponseEntity<>(user, HttpStatus.OK);
     } catch (CmaxException e) {
       return ApiErrors.of(e);
     }
@@ -130,7 +137,8 @@ public class UsersApiController implements UsersApi {
     }
   }
 
-  public ResponseEntity usersSignUpPost(
+  @Override
+  public ResponseEntity usersSignupPost(
       @Parameter(in = ParameterIn.DEFAULT, description = "", required = true, schema = @Schema())
           @Valid
           @RequestBody

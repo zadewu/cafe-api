@@ -23,12 +23,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import vn.cmax.cafe.api.models.ApiError;
 import vn.cmax.cafe.api.models.Role;
+import vn.cmax.cafe.api.models.User;
 import vn.cmax.cafe.api.models.UserRequest;
 import vn.cmax.cafe.api.models.UserSearchResponse;
 
 @javax.annotation.Generated(
     value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
-    date = "2023-08-05T19:16:24.213703+07:00[Asia/Ho_Chi_Minh]")
+    date = "2023-09-22T23:30:12.445491+07:00[Asia/Ho_Chi_Minh]")
 @Validated
 public interface UsersApi {
 
@@ -56,14 +57,11 @@ public interface UsersApi {
           @Valid
           @RequestParam(value = "role", required = false)
           Role role,
-      @Min(1)
+      @Min(0)
           @Parameter(
               in = ParameterIn.QUERY,
               description = "",
-              schema =
-                  @Schema(
-                      allowableValues = {},
-                      minimum = "1"))
+              schema = @Schema(allowableValues = {}))
           @Valid
           @RequestParam(value = "page", required = false)
           Integer page,
@@ -80,6 +78,44 @@ public interface UsersApi {
           @Valid
           @RequestParam(value = "pageSize", required = false)
           Integer pageSize);
+
+  @Operation(
+      summary = "Search user by Id",
+      description = "Search user by Id",
+      security = {@SecurityRequirement(name = "BearerAuth")},
+      tags = {"user"})
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "OK",
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = User.class))),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized",
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ApiError.class))),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Unauthorized",
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ApiError.class)))
+      })
+  @RequestMapping(
+      value = "/users/{id}",
+      produces = {"application/json"},
+      method = RequestMethod.GET)
+  ResponseEntity<User> usersIdGet(
+      @Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
+          @PathVariable("id")
+          Long id);
 
   @Operation(
       summary = "Update user",
@@ -159,7 +195,7 @@ public interface UsersApi {
       produces = {"application/json"},
       consumes = {"application/json"},
       method = RequestMethod.POST)
-  ResponseEntity usersSignUpPost(
+  ResponseEntity<Void> usersSignupPost(
       @Parameter(in = ParameterIn.DEFAULT, description = "", required = true, schema = @Schema())
           @Valid
           @RequestBody
