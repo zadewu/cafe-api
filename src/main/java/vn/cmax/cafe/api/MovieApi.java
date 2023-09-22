@@ -93,7 +93,7 @@ public interface MovieApi {
           Long category,
       @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema())
       @Valid
-      @RequestParam(value = "keyword", required = false)
+      @RequestParam(value = "keyWord", required = false)
       String keyword);
 
   @Operation(

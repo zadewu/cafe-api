@@ -548,7 +548,7 @@ components:
         type: integer
         format: int64
     keyword:
-      name: keyword
+      name: keyWord
       in: query
       type: string
   schemas:
