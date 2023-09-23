@@ -82,6 +82,7 @@ paths:
         - $ref: '#/components/parameters/role'
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/keyword'
       responses:
         '200':
           description: OK
@@ -166,6 +167,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/keyword'
       responses:
         '200':
           description: OK
@@ -372,6 +374,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/keyword'
       responses:
         '200':
           description: OK

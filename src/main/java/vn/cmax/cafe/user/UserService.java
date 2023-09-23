@@ -17,5 +17,5 @@ public interface UserService {
 
   void deleteUser(Long id) throws CmaxException;
 
-  UserSearchResponse findAllUser(int page, int pageSize, Role role) throws CmaxException;
+  UserSearchResponse findAllUser(int page, int pageSize, Role role, String keyword) throws CmaxException;
 }

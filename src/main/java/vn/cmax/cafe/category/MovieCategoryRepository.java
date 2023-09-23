@@ -7,7 +7,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface MovieCategoryRepository extends JpaRepository<MovieCategoryEntity, Long> {
-    Optional<MovieCategoryEntity> findMovieCategoryEntitiesByCategoryName(String name);
-    Page<MovieCategoryEntity> findAllByOrderByCreatedDateDesc(Pageable pageable);
+  Optional<MovieCategoryEntity> findMovieCategoryEntitiesByCategoryName(String name);
 
+  Page<MovieCategoryEntity> findAllByOrderByCreatedDateDesc(Pageable pageable);
+
+  Page<MovieCategoryEntity> findByCategoryNameContainsIgnoreCaseOrderByCreatedDateDesc(
+      String keyword, Pageable pageable);
 }

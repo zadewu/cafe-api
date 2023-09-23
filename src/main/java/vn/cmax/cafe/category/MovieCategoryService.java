@@ -29,9 +29,16 @@ public class MovieCategoryService {
   private MovieCategoryRepository categoryRepository;
   private MovieRepository movieRepository;
 
-  public CategorySearchResponse findAll(int page, int pageSize) {
+  public CategorySearchResponse findAll(int page, int pageSize, String keyword) {
     Pageable pageable = PageRequest.of(page, pageSize);
-    Page<MovieCategoryEntity> categoryEntities = categoryRepository.findAllByOrderByCreatedDateDesc(pageable);
+    Page<MovieCategoryEntity> categoryEntities;
+    if (StringUtils.isNotBlank(keyword)) {
+      categoryEntities =
+          categoryRepository.findByCategoryNameContainsIgnoreCaseOrderByCreatedDateDesc(
+              keyword, pageable);
+    } else {
+      categoryEntities = categoryRepository.findAllByOrderByCreatedDateDesc(pageable);
+    }
     CategorySearchResponse response = new CategorySearchResponse().records(new ArrayList<>());
     Page<Category> categories =
         categoryEntities.map(item -> CategoryMapper.INSTANCE.fromEntity(item));

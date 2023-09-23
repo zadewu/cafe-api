@@ -17,6 +17,9 @@ import vn.cmax.cafe.security.jwt.JwtSecurityConfigurer;
 import vn.cmax.cafe.security.jwt.JwtTokenManager;
 import vn.cmax.cafe.user.UserService;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -25,7 +28,6 @@ public class SecurityConfig {
   private final JwtTokenManager jwtTokenManager;
   private final CustomAccessDeniedHandler accessDeniedHandler;
   private final CustomAuthenticationFailedHandler authenticationFailedHandler;
-
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -39,14 +41,7 @@ public class SecurityConfig {
         .authorizeRequests()
         .antMatchers("/auth/login/**", "/auth/refresh**", "/users/signup**")
         .permitAll()
-        .antMatchers(HttpMethod.GET,
-                "/promotion**",
-                "/promotion/**",
-                "/movie**",
-                "/movie/**",
-                "/category**",
-                "/category/**",
-                "/information**")
+        .antMatchers(HttpMethod.GET, UrlIgnorePattern.toArray())
         .permitAll()
         .anyRequest()
         .authenticated()

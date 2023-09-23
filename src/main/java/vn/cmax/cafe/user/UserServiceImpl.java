@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import vn.cmax.cafe.api.models.*;
@@ -18,6 +20,7 @@ import vn.cmax.cafe.exception.CmaxException;
 import vn.cmax.cafe.exception.ValidationException;
 import vn.cmax.cafe.mapper.RoleMapper;
 import vn.cmax.cafe.mapper.UserMapper;
+import vn.cmax.cafe.utils.Keywords;
 import vn.cmax.cafe.utils.RequestValidators;
 import vn.cmax.cafe.utils.UserRequests;
 
@@ -103,16 +106,18 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public UserSearchResponse findAllUser(int page, int pageSize, Role role) throws CmaxException {
-    Pageable pageable = PageRequest.of(page, pageSize);
+  public UserSearchResponse findAllUser(int page, int pageSize, Role role, String keyword)
+      throws CmaxException {
+    Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "updatedDate"));
     UserSearchResponse response = new UserSearchResponse().records(new ArrayList<>());
-    Page<UserEntity> userEntityPage;
+    UserRole convertRole = null;
     if (role != null) {
-      UserRole convertRole = UserRole.valueOf(role.name());
-      userEntityPage = this.userRepository.findAllByRolesOrderByUpdatedDateDesc(pageable, convertRole);
-    } else {
-      userEntityPage = this.userRepository.findAllByOrderByUpdatedDateDesc(pageable);
+      convertRole = UserRole.valueOf(role.name());
     }
+    Specification<UserEntity> userEntitySpecification =
+        Keywords.fromUserKeyword(convertRole, keyword);
+    Page<UserEntity> userEntityPage =
+        this.userRepository.findAll(userEntitySpecification, pageable);
     Page<User> users = userEntityPage.map(item -> UserMapper.INSTANCE.fromEntity(item));
     response
         .records(users.getContent())

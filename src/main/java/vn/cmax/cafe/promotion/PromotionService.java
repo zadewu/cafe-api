@@ -76,11 +76,17 @@ public class PromotionService {
     return PromotionMapper.INSTANCE.fromEntity(saved);
   }
 
-  public PromotionSearchResponse findAllPromotion(int page, int pageSize) {
+  public PromotionSearchResponse findAllPromotion(int page, int pageSize, String keyword) {
     Pageable pageable = PageRequest.of(page, pageSize);
     PromotionSearchResponse response = new PromotionSearchResponse().records(new ArrayList<>());
-    Page<PromotionEntity> promotionEntityPage =
-        this.promotionRepository.findAllByOrderByUpdatedDateDesc(pageable);
+    Page<PromotionEntity> promotionEntityPage;
+    if (StringUtils.isNotBlank(keyword)) {
+      promotionEntityPage =
+          this.promotionRepository.findByTitleContainingIgnoreCaseOrderByUpdatedDateDesc(
+              keyword, pageable);
+    } else {
+      promotionEntityPage = this.promotionRepository.findAllByOrderByUpdatedDateDesc(pageable);
+    }
     Page<Promotion> promotions =
         promotionEntityPage.map(item -> PromotionMapper.INSTANCE.fromEntity(item));
     response

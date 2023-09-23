@@ -77,7 +77,11 @@ public interface UsersApi {
                       maximum = "50"))
           @Valid
           @RequestParam(value = "pageSize", required = false)
-          Integer pageSize);
+          Integer pageSize,
+      @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema())
+          @Valid
+          @RequestParam(value = "keyWord", required = false)
+          String keyword);
 
   @Operation(
       summary = "Search user by Id",

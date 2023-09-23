@@ -63,8 +63,12 @@ public class PromotionApiController implements PromotionApi {
                       maximum = "50"))
           @Valid
           @RequestParam(value = "pageSize", required = false)
-          Integer pageSize) {
-    PromotionSearchResponse response = this.promotionService.findAllPromotion(page, pageSize);
+          Integer pageSize,
+      @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema())
+          @Valid
+          @RequestParam(value = "keyWord", required = false)
+          String keyword) {
+    PromotionSearchResponse response = this.promotionService.findAllPromotion(page, pageSize, keyword);
     return new ResponseEntity<PromotionSearchResponse>(response, HttpStatus.OK);
   }
 

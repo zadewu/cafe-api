@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import vn.cmax.cafe.api.models.Movie;
@@ -21,6 +23,7 @@ import vn.cmax.cafe.category.MovieCategoryRepository;
 import vn.cmax.cafe.exception.CmaxException;
 import vn.cmax.cafe.exception.ValidationException;
 import vn.cmax.cafe.mapper.MovieMapper;
+import vn.cmax.cafe.utils.QuerySpecifications;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -30,20 +33,12 @@ public class MovieService {
 
   public MovieSearchResponse findAllMovies(
       int page, int pageSize, Long categoryId, String keyword) {
-    Pageable pageable = PageRequest.of(page, pageSize);
+    Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "createdDate"));
     MovieSearchResponse response = new MovieSearchResponse().records(new ArrayList<>());
-    Page<MovieEntity> movieEntities;
-    if (categoryId != null) {
-      movieEntities =
-          this.movieRepository.findAllByCategoryIdOrderByCreatedDateDesc(categoryId, pageable);
-    } else {
-      movieEntities = this.movieRepository.findAllByOrderByCreatedDateDesc(pageable);
-    }
-    if (StringUtils.isNotBlank(keyword)) {
-      movieEntities =
-          this.movieRepository.findByMovieNameContainsIgnoreCaseOrderByCreatedDateDesc(
-              keyword, pageable);
-    }
+    Specification<MovieEntity> movieEntitySpecification =
+        QuerySpecifications.searchMovie(categoryId, keyword);
+    Page<MovieEntity> movieEntities =
+        this.movieRepository.findAll(movieEntitySpecification, pageable);
     Page<Movie> movies = movieEntities.map(item -> MovieMapper.INSTANCE.fromEntity(item));
     response
         .records(movies.getContent())

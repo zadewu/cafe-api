@@ -63,8 +63,12 @@ public class CategoryApiController implements CategoryApi {
                       maximum = "50"))
           @Valid
           @RequestParam(value = "pageSize", required = false)
-          Integer pageSize) {
-    CategorySearchResponse response = this.movieCategoryService.findAll(page, pageSize);
+          Integer pageSize,
+      @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema())
+          @Valid
+          @RequestParam(value = "keyWord", required = false)
+          String keyword) {
+    CategorySearchResponse response = this.movieCategoryService.findAll(page, pageSize, keyword);
     return new ResponseEntity<CategorySearchResponse>(response, HttpStatus.OK);
   }
 
