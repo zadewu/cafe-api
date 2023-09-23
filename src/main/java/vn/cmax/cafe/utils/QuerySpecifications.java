@@ -43,7 +43,7 @@ public class QuerySpecifications {
       if (StringUtils.isNotBlank(keyword)) {
         predicates.add(
             criteriaBuilder.like(
-                criteriaBuilder.lower(root.get("name")), "%" + keyword.toLowerCase() + "%"));
+                criteriaBuilder.lower(root.get("movieName")), "%" + keyword.toLowerCase() + "%"));
       }
       if (category != null) {
         predicates.add(criteriaBuilder.equal(root.get("category_id"), category));
