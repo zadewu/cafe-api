@@ -46,7 +46,7 @@ public class QuerySpecifications {
                 criteriaBuilder.lower(root.get("movieName")), "%" + keyword.toLowerCase() + "%"));
       }
       if (category != null) {
-        predicates.add(criteriaBuilder.equal(root.get("category_id"), category));
+        predicates.add(criteriaBuilder.equal(root.get("category").get("id"), category));
       }
       return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
     };
