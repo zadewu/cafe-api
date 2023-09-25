@@ -84,10 +84,13 @@ public class UserServiceImpl implements UserService {
         updatedUser.setPassword(passwordEncoder.encode(userRequest.getPassword()));
       }
     }
-    updatedUser.setUsername(userRequest.getUsername());
-    updatedUser.setFirstName(userRequest.getFirstName());
-    updatedUser.setLastName(userRequest.getLastName());
-    updatedUser.setEmail(userRequest.getEmail());
+    Optional.ofNullable(userRequest.getUsername()).ifPresent(item -> updatedUser.setUsername(item));
+    Optional.ofNullable(userRequest.getFirstName())
+        .ifPresent(item -> updatedUser.setFirstName(item));
+    Optional.ofNullable(userRequest.getLastName()).ifPresent(item -> updatedUser.setLastName(item));
+    Optional.ofNullable(userRequest.getEmail()).ifPresent(item -> updatedUser.setEmail(item));
+    Optional.ofNullable(userRequest.getPhoneNumber())
+        .ifPresent(item -> updatedUser.setPhoneNumber(item));
     if (userRequest.getRoles() != null && userRequest.getRoles().size() > 0) {
       UserEntity authUser = this.authenticationService.getCurrentAuthenticatedUser();
       if (this.authenticationService.isSuperUser(authUser)) {
